@@ -1,0 +1,27 @@
+.logo {
+    margin-bottom: 24px;
+}
+
+.title {
+    max-width: 320px;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 48px;
+    letter-spacing: -2.4px;
+    text-wrap: balance;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+    .title {
+        font-size: 32px;
+        line-height: 40px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .logo {
+        filter: invert();
+    }
+}

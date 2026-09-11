@@ -1,0 +1,26 @@
+.spellList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 520px;
+    margin: 16px 0;
+}
+
+.spellItem {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition:
+        color 0.3s ease-in-out;
+    padding: 4px 0;
+    user-select: none;
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+    .spellItem:hover {
+        color: var(--error-color);
+    }
+}

@@ -1,0 +1,40 @@
+.copyButton {
+    min-width: 54px;
+}
+
+.copyButtonSuccess {
+    border-color: #2f9e4350;
+}
+
+.copyButtonError {
+    border-color: var(--error-color);
+}
+
+.copyButtonSuccess:not(:disabled):hover {
+    border-color: #2f9e4350;
+    background-color: #2f9e431e;
+}
+
+.copyButtonError:not(:disabled):hover {
+    border-color: var(--error-color);
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25em;
+    animation: fadeIn 180ms ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

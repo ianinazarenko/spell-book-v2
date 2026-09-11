@@ -1,0 +1,61 @@
+.wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 80px;
+    width: 220px;
+    padding: 0 20px;
+    border-top:  2px solid var(--button-secondary-border);
+    border-bottom: 2px solid var(--button-secondary-border);
+
+    & > * {
+        font-size: 80px;
+        font-weight: bold;
+    }
+}
+
+.digit {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    color: var(--button-secondary-border);
+}
+
+.digit._animating {
+    &.previous {
+        animation: slideOutUp 700ms ease forwards;
+    }
+
+    &.current {
+        animation: slideInFromBottom 700ms ease forwards;
+
+    }
+}
+
+.previous,
+.current {
+    transform: translateY(0);
+}
+
+ @keyframes slideOutUp {
+      from {
+          transform: translateY(0);
+          opacity: 1;
+      }
+      to {
+          transform: translateY(-100%);
+          opacity: 0;
+      }
+  }
+
+  @keyframes slideInFromBottom {
+      from {
+          transform: translateY(100%);
+          opacity: 0;
+      }
+      to {
+          transform: translateY(0);
+          opacity: 1;
+      }
+  }

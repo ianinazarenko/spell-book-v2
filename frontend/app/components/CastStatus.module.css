@@ -1,0 +1,56 @@
+.wrapper {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.sparkles {
+    position: relative;
+    height: 80px;
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.sparkles._show {
+    opacity: 1;
+
+    .dot {
+        transform: translate(-50%, -50%) scale(0);
+    }
+}
+
+.dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: var(--text-primary);
+    border-radius: 50%;
+    opacity: .5;
+    transform: translate(-50%, -50%) scale(1);
+    transform-origin: center;
+    transition: transform 0.3s ease-out;
+}
+
+.info {
+    height: 32px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    margin-top: 24px;
+}
+
+.info._show {
+    opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+    .sparkles {
+        filter: invert();
+    }
+}
