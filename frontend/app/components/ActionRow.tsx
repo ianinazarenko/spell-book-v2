@@ -24,6 +24,7 @@ export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
     );
 
     const spellInputRef = useRef<HTMLInputElement>(null);
+    const isSubmitDisabled = !spell.trim() || isPending;
 
     // --- Handlers ---
     function handleSpellChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -63,6 +64,7 @@ export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
             <p className={styles.durationHint}>duration is in minutes</p>
 
             <form
+                autoComplete='off'
                 className={styles.actionRow}
                 onSubmit={handleSubmit}
             >
@@ -90,7 +92,7 @@ export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
                 <button
                     type='submit'
                     className={`${styles.btn} ${styles.btnPrimary}`}
-                    disabled={!spell.trim() || isPending}
+                    disabled={isSubmitDisabled}
                 >
                     {BTN_LABEL}
                 </button>
