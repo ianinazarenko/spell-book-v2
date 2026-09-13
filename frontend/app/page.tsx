@@ -1,8 +1,11 @@
 'use client';
 
+// Types
+import { ISpellJob } from './types/spells';
+
 import styles from './page.module.css';
 import { useEffect, useState, useRef } from 'react';
-import { useLocalStorage, useSessionStorage } from '@/lib/hooks/useStorage';
+import { useLocalStorage } from '@/lib/hooks/useStorage';
 
 // Компоненты
 import { HeaderLogo } from './components/HeaderLogo';
@@ -17,12 +20,18 @@ export default function Home() {
     const SPELLS_KEY = 'spells';
     const DUR_KEY = 'cast-duration';
 
+    // --- NEW LOGIC ---
+    // --- Back-end sync ---
+    const baseUrl = process.env.BASE_URL ?? 'http://localhost:8000';
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [spells, setSpells] = useState<ISpellJob[]>([]);
+    const spellsList: string[] = spells.map((s) => s.spell);
+    // --- end region ---
+
     // --- Состояние (UI) ---
-    const [spells, setSpells] = useSessionStorage<string[]>(SPELLS_KEY, []);
     const [storedSpells, setStoredSpells] = useLocalStorage<string[]>(SPELLS_KEY, []);
     const [durationMinutes, setDurationMinutes] = useLocalStorage<number>(DUR_KEY, 60);
 
-    const [inputValue, setInputValue] = useState<string>('');
     const [isCasting, setIsCasting] = useState<boolean>(false);
     const [castCount, setCastCount] = useState<number>(0);
 
@@ -36,9 +45,9 @@ export default function Home() {
     const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
     // Синхронизируем "зеркало" для интервала
-    useEffect(() => {
-        spellsRef.current = spells;
-    }, [spells]);
+    // useEffect(() => {
+    // spellsRef.current = spells;
+    // }, [spells]);
 
     // --- Utils ---
     function compareSpells() {
@@ -46,17 +55,8 @@ export default function Home() {
     }
 
     // --- Магические действия (CRUD) ---
-    function addSpell() {
-        const trimmed = inputValue.trim();
-
-        if (!!trimmed) {
-            setSpells((prev) => [...prev, trimmed]);
-            setInputValue('');
-        }
-    }
-
     function removeSpell(indexToRemove: number) {
-        setSpells((prev: string[]) => prev.filter((_, index) => index !== indexToRemove));
+        setSpells((prev: ISpellJob[]) => prev.filter((_, index) => index !== indexToRemove));
     }
 
     function clearAll() {
@@ -66,12 +66,12 @@ export default function Home() {
 
     function saveToStorage() {
         if (!spells.length) return;
-        setStoredSpells(spells);
+        // setStoredSpells(spells);
     }
 
     function restoreSpells() {
         if (!hasStoredSpells) return;
-        setSpells(storedSpells);
+        // setSpells(storedSpells);
     }
 
     // --- Управление кастом ---
@@ -120,9 +120,54 @@ export default function Home() {
     }, [isCasting, durationMinutes]);
 
     // --- Обработчики событий ---
-    function handleKeyDown(e: React.KeyboardEvent) {
-        if (e.key === 'Enter') {
-            addSpell();
+
+    // --- NEW LOGIC ---
+    // --- Back-end sync ---
+    async function getSpells() {
+        try {
+            setIsLoading(true);
+            setSpells([]);
+        } catch (e: unknown) {
+            console.warn(e);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    async function handleSubmit(
+        e: React.SubmitEvent,
+        body: { spell: string; duration: string | number }
+    ): Promise<{ success: boolean }> {
+        e.preventDefault();
+
+        if (!body.spell || !body.duration) {
+            throw new Error('There should be spell and duration values');
+        }
+
+        try {
+            const res = await fetch(`${baseUrl}/spells`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+            const data = (await res.json()) as ISpellJob & { message?: string };
+
+            if (!res.ok) {
+                const message = data.message ? data.message : null;
+                throw new Error(message ?? `Request failed: ${res.status} ${res.statusText}`);
+            }
+
+            setSpells((prev) => [...prev, data]);
+
+            // TODO: temporary
+            console.log('Job created:', data);
+            return { success: true };
+        } catch (e: unknown) {
+            const message = e instanceof Error ? e.message : 'Unknown error';
+            console.warn('Could not create spell!', message);
+
+            return { success: false };
         }
     }
 
@@ -133,18 +178,20 @@ export default function Home() {
 
                 <div>
                     <ActionRow
-                        durationMinutes={durationMinutes}
-                        setDurationMinutes={setDurationMinutes}
-                        inputValue={inputValue}
-                        setInputValue={setInputValue}
-                        onAdd={addSpell}
+                        onAdd={handleSubmit}
                         isCasting={isCasting}
-                        onKeyDown={handleKeyDown}
                     />
 
-                    <SpellList spells={spells} onRemove={removeSpell} />
+                    <SpellList
+                        spells={spellsList}
+                        onRemove={removeSpell}
+                    />
 
-                    <CastStatus isCasting={isCasting} castCount={castCount} duration={SPEED} />
+                    <CastStatus
+                        isCasting={isCasting}
+                        castCount={castCount}
+                        duration={SPEED}
+                    />
                 </div>
 
                 <RitualControls

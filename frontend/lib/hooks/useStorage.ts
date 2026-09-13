@@ -67,7 +67,7 @@ function writeStorage<T>(type: TStorage, key: string, value: T): void {
 function useStorage<T>(
     type: TStorage,
     key: string,
-    initialValue: T,
+    initialValue: T
 ): [T, (val: TStateValue<T>) => void] {
     const initialValueRef = useRef(initialValue);
 
@@ -83,12 +83,12 @@ function useStorage<T>(
                 window.removeEventListener('storage', callback);
             };
         },
-        [key],
+        [key]
     );
 
     const getSnapshot = useCallback(
         () => readStorage(type, key, initialValueRef.current),
-        [type, key],
+        [type, key]
     );
 
     const getServerSnapshot = useCallback(() => initialValueRef.current, []);
@@ -104,7 +104,7 @@ function useStorage<T>(
 
             writeStorage(type, key, resolvedValue);
         },
-        [type, key],
+        [type, key]
     );
 
     return [value, setValue];
@@ -114,6 +114,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     return useStorage<T>('localStorage', key, initialValue);
 }
 
-export function useSessionStorage<T>(key: string, initialValue: T) {
-    return useStorage<T>('sessionStorage', key, initialValue);
-}
+// export function useSessionStorage<T>(key: string, initialValue: T) {
+//     return useStorage<T>('sessionStorage', key, initialValue);
+// }

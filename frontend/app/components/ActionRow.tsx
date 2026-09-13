@@ -1,100 +1,100 @@
-import { log } from 'console';
 import styles from './ActionRow.module.css';
-import { useState } from 'react';
+import { useEffect, useOptimistic, useRef, useState, useTransition } from 'react';
 
 interface ActionRowProps {
-    durationMinutes: number;
-    setDurationMinutes: (val: number) => void;
-    inputValue: string;
-    setInputValue: (val: string) => void;
-    onAdd: () => void;
+    onAdd: (
+        e: React.SubmitEvent,
+        data: { spell: string; duration: string | number }
+    ) => Promise<{ success: boolean }>;
     isCasting: boolean;
-    onKeyDown: (e: React.KeyboardEvent) => void;
 }
 
-export function ActionRow({
-    durationMinutes,
-    setDurationMinutes,
-    inputValue,
-    setInputValue,
-    onAdd,
-    isCasting,
-    onKeyDown,
-}: ActionRowProps) {
-    function handleDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setDurationMinutes(Math.max(1, parseInt(e.target.value) || 1));
+export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
+    // --- Constants ---
+    const BTN_LABEL = 'Add';
+
+    // --- State ---
+    const [spell, setSpell] = useState<string>('');
+    const [duration, setDuration] = useState<number>(60);
+
+    const [isPending, startTransition] = useTransition();
+    const [optimisticSpell, setOptimistincSpell] = useOptimistic(
+        spell,
+        (_, optimisticData: string) => optimisticData
+    );
+
+    const spellInputRef = useRef<HTMLInputElement>(null);
+
+    // --- Handlers ---
+    function handleSpellChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setSpell(e.target.value);
     }
 
-    const BTN_LABEL = 'Add';
-    const BASE_URL = 'http://localhost:8000';
+    function handleDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setDuration(Math.max(1, parseInt(e.target.value) || 1));
+    }
 
-    const [loading, setLoading] = useState<boolean>(false);
+    function handleSubmit(e: React.SubmitEvent) {
+        const trimmedSpell = spell.trim();
+        if (!trimmedSpell) return;
 
-    async function handleAdd() {
-        // TODO: refactor!
-        onAdd();
+        const clearedState = '';
 
-        const body = {
-            spell: inputValue ?? '',
-            duration: durationMinutes ?? 0,
-        };
+        startTransition(async () => {
+            setOptimistincSpell(clearedState);
+            const { success } = await onAdd(e, { spell: trimmedSpell, duration });
 
-        try {
-            setLoading(true);
-            const res = await fetch(`${BASE_URL}/spells`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.message ?? `Request failed: ${res.status} ${res.statusText}`);
+            if (success) {
+                setSpell(clearedState);
             }
 
-            console.log('Job created:', data);
-        } catch (e: unknown) {
-            const message = e instanceof Error ? e.message : 'Unknown error';
-            console.warn('Could not create spell!', message);
-        } finally {
-            setLoading(false);
-        }
+            spellInputRef.current?.focus();
+        });
     }
+
+    useEffect(() => {
+        if (!isPending) {
+            spellInputRef.current?.focus();
+        }
+    }, [isPending]);
 
     return (
         <div className={styles.intro}>
             <p className={styles.durationHint}>duration is in minutes</p>
 
-            <div className={styles.actionRow}>
+            <form
+                className={styles.actionRow}
+                onSubmit={handleSubmit}
+            >
                 <input
                     type='number'
                     min='1'
                     max='360'
-                    value={durationMinutes}
+                    value={duration}
                     onChange={handleDurationChange}
                     className={`${styles.input} ${styles.inputSmall}`}
-                    disabled={isCasting}
+                    disabled={isCasting || isPending}
                     title='Duration in minutes'
                 />
 
                 <input
                     type='text'
                     placeholder='Enter a new spell...'
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={onKeyDown}
+                    value={optimisticSpell}
+                    ref={spellInputRef}
+                    onChange={handleSpellChange}
                     className={`${styles.input} ${styles.inputMain}`}
+                    disabled={isPending}
                 />
 
                 <button
+                    type='submit'
                     className={`${styles.btn} ${styles.btnPrimary}`}
-                    onClick={handleAdd}
-                    disabled={!inputValue.trim() || loading}
+                    disabled={!spell.trim() || isPending}
                 >
                     {BTN_LABEL}
                 </button>
-            </div>
+            </form>
         </div>
     );
 }
