@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from './app.service.js';
+import { CreateSpellDto } from './spells/create-spell.dto.js';
 
 @Controller()
 export class AppController {
@@ -13,5 +14,10 @@ export class AppController {
     @Get('health')
     getHealth(): { status: string; timestamp: string } {
         return this.appService.getHealth();
+    }
+
+    @Post('spells')
+    createSpell(@Body() dto: CreateSpellDto) {
+        return this.appService.createSpell(dto);
     }
 }
