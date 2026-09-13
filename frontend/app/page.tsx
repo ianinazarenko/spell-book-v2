@@ -1,7 +1,7 @@
 'use client';
 
 // Types
-import { ISpellJob } from './types/spells';
+import type { ISpellItem } from '@shared/spells/spells.types';
 
 import styles from './page.module.css';
 import { useEffect, useState, useRef } from 'react';
@@ -24,7 +24,7 @@ export default function Home() {
     // --- Back-end sync ---
     const baseUrl = process.env.BASE_URL ?? 'http://localhost:8000';
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [spells, setSpells] = useState<ISpellJob[]>([]);
+    const [spells, setSpells] = useState<ISpellItem[]>([]);
     const spellsList: string[] = spells.map((s) => s.spell);
     // --- end region ---
 
@@ -56,7 +56,7 @@ export default function Home() {
 
     // --- Магические действия (CRUD) ---
     function removeSpell(indexToRemove: number) {
-        setSpells((prev: ISpellJob[]) => prev.filter((_, index) => index !== indexToRemove));
+        setSpells((prev: ISpellItem[]) => prev.filter((_, index) => index !== indexToRemove));
     }
 
     function clearAll() {
@@ -151,7 +151,7 @@ export default function Home() {
                 body: JSON.stringify(body),
             });
 
-            const data = (await res.json()) as ISpellJob & { message?: string };
+            const data = (await res.json()) as ISpellItem & { message?: string };
 
             if (!res.ok) {
                 const message = data.message ? data.message : null;

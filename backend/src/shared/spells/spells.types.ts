@@ -1,6 +1,6 @@
-import { EStatus } from './spell.enum.js';
+import { EStatus } from './spells.enums.js';
 
-export interface ISpellJob {
+export interface ISpellItem {
     id: string;
     spell: string;
     duration: number;

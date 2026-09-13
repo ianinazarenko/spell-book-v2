@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSpellDto } from './spells/create-spell.dto.js';
-import { ISpellJob } from './spells/spell.types.js';
-import { EStatus } from './spells/spell.enum.js';
+import { EStatus } from './shared/spells/spells.enums.js';
+import type { ISpellItem } from './shared/spells/spells.types.js';
 
 @Injectable()
 export class AppService {
     // TODO: temparary storage
-    private jobs: ISpellJob[] = [];
+    private jobs: ISpellItem[] = [];
 
     getHello(): string {
         return 'Hello World!';
@@ -19,8 +19,8 @@ export class AppService {
         };
     }
 
-    createSpell(dto: CreateSpellDto): ISpellJob {
-        const newJob: ISpellJob = {
+    createSpell(dto: CreateSpellDto): ISpellItem {
+        const newJob: ISpellItem = {
             id: Date.now().toString(), // TODO: temporary
             spell: dto.spell,
             duration: dto.duration,
