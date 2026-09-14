@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model SpellJob {
+  id                  String   @id @default(cuid())
+  spellText           String   @db.Text @map("spell_text")
+  iterationsTotal     Int      @map("iterations_total")
+  iterationsCompleted Int      @map("iterations_completed") @default(0)
+  durationMin         Int      @map("duration_min") @default(60)
+  status              String   @default("accepted") @db.VarChar(50)
+  createdAt           DateTime @map("created_at") @default(now())
+  updatedAt           DateTime @map("updated_at") @updatedAt 
+  errorMessage        String?  @map("error_message") @db.Text
+
+  @@map("spell_jobs")
+}
