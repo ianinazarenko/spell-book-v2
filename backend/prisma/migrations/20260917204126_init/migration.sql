@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "SpellStatus" AS ENUM ('QUEUED', 'RUNNING', 'COMPLETED', 'FAILED');
+
 -- CreateTable
 CREATE TABLE "spell_jobs" (
     "id" TEXT NOT NULL,
@@ -5,7 +8,7 @@ CREATE TABLE "spell_jobs" (
     "iterations_total" INTEGER NOT NULL,
     "iterations_completed" INTEGER NOT NULL DEFAULT 0,
     "duration_min" INTEGER NOT NULL DEFAULT 60,
-    "status" VARCHAR(50) NOT NULL DEFAULT 'accepted',
+    "status" "SpellStatus" NOT NULL DEFAULT 'QUEUED',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "error_message" TEXT,
