@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { AppService } from './app.service.js';
 import { CreateSpellDto } from './spells/create-spell.dto.js';
 
@@ -14,6 +14,16 @@ export class AppController {
     @Get('health')
     getHealth(): { status: string; timestamp: string } {
         return this.appService.getHealth();
+    }
+
+    @Get('spells')
+    getAllSpells() {
+        return this.appService.getAllSpells();
+    }
+
+    @Get('spells/:id')
+    getSpellById(@Param('id') id: string) {
+        return this.appService.getSpellById(id);
     }
 
     @Post('spells')

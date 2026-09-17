@@ -1,10 +1,6 @@
 import { EStatus } from './spells.enums.js';
+import { SpellJob } from '../../generated/prisma/client.js';
 
-export interface ISpellItem {
-    id: string;
-    spell: string;
-    duration: number;
-    iterationsCompleted: number;
+export type SpellItem = Omit<SpellJob, 'status'> & {
     status: EStatus;
-    createdAt: string;
-}
+};
