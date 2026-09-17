@@ -1,6 +1,4 @@
-import { EStatus } from './spells.enums.js';
 import { SpellJob } from '../../generated/prisma/client.js';
 
-export type SpellItem = Omit<SpellJob, 'status'> & {
-    status: EStatus;
-};
+export type SpellItem = SpellJob;
+export type SpellStatus = SpellJob['status'];
