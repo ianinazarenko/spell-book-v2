@@ -8,22 +8,39 @@ datasource db {
 }
 
 enum SpellStatus {
-  QUEUED      // Создано/ждет запуска
-  RUNNING     // В процессе выполнения
-  COMPLETED   // Успешно завершено
-  FAILED      // Завершилось с ошибкой
+  QUEUED // Создано/ждет запуска
+  RUNNING // В процессе выполнения
+  COMPLETED // Успешно завершено
+  FAILED // Завершилось с ошибкой
 }
 
 model SpellJob {
-  id                  String        @id @default(cuid())
-  spellText           String        @db.Text @map("spell_text")
-  iterationsTotal     Int           @map("iterations_total")
-  iterationsCompleted Int           @map("iterations_completed") @default(0)
-  durationMin         Int           @map("duration_min") @default(60)
-  status              SpellStatus   @default(QUEUED) 
-  createdAt           DateTime      @map("created_at") @default(now())
-  updatedAt           DateTime      @map("updated_at") @updatedAt 
-  errorMessage        String?       @map("error_message") @db.Text
+  id                  String      @id @default(cuid())
+  spellText           String      @map("spell_text") @db.Text
+  iterationsTotal     Int         @map("iterations_total")
+  iterationsCompleted Int         @default(0) @map("iterations_completed")
+  durationMin         Int         @default(60) @map("duration_min")
+  status              SpellStatus @default(QUEUED)
+  createdAt           DateTime    @default(now()) @map("created_at")
+  updatedAt           DateTime    @updatedAt @map("updated_at")
+  errorMessage        String?     @map("error_message") @db.Text
 
   @@map("spell_jobs")
+}
+
+model SavedSpell {
+  id        String @id @default(cuid())
+  spellText String @map("spell_text") @db.Text
+
+  @@map("saved_spells")
+}
+
+model SpellConfig {
+  id                  String      @id @default(cuid())
+  durationMin         Int?        @default(60) @map("duration_min")
+  iterationsTotal     Int         @default(1770) @map("iterations_total")
+  iterationsCompleted Int         @default(0) @map("iterations_completed")
+  status              SpellStatus @default(QUEUED)
+
+  @@map("spell_configs")
 }
