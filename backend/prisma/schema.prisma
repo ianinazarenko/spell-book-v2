@@ -36,8 +36,8 @@ model SavedSpell {
 }
 
 model SpellConfig {
-  id                  String      @id @default(cuid())
-  durationMin         Int?        @default(60) @map("duration_min")
+  id                  String      @id @default("spell-configs")
+  durationMin         Int?        @map("duration_min")
   iterationsTotal     Int         @default(1770) @map("iterations_total")
   iterationsCompleted Int         @default(0) @map("iterations_completed")
   status              SpellStatus @default(QUEUED)
