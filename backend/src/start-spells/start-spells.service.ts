@@ -1,16 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { SpellStatus } from '../generated/prisma/enums.js';
+
+interface AnswerStatus {
+    message: string;
+    status: SpellStatus;
+    success: boolean;
+}
 
 @Injectable()
 export class StartSpellsService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async startSpellJob(id: string) {
+    async startAllSpellsJob(): Promise<void> {
+        //     const spells = await this.prisma.spellJob.findMany({
+        //         orderBy: { createdAt: 'desc' },
+        //     });
+        //     if (!spells || !spells.length) {
+        //         throw new Error('There is no spells to cast');
+        //     }
+        //     await this.prisma.spellJob.updateMany({
+        //         data: { status: 'RUNNING' },
+        //     });
+    }
+
+    async startSpellJob(id: string): Promise<{ message: string; status: SpellStatus }> {
         const spell = await this.prisma.spellJob.findUnique({
             where: { id },
         });
 
-        if (!spell || spell.status !== 'QUEUED') {
+        if (!spell || spell.status === 'RUNNING') {
             throw new Error('Task cannot be started');
         }
 
@@ -23,7 +42,7 @@ export class StartSpellsService {
         // Важно: мы НЕ делаем await для runBackgroundLoop, чтобы HTTP-запрос не ждал завершения!
         this.runBackgroundLoop(id, spell.iterationsTotal, spell.durationMin);
 
-        return { message: 'Spell execution started' };
+        return { message: 'Spell execution started', status: 'RUNNING' };
     }
 
     private async runBackgroundLoop(id: string, totalIterations: number, duration: number) {

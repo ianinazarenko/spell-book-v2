@@ -5,7 +5,13 @@ import { StartSpellsService } from './start-spells.service.js';
 export class StartSpellController {
     constructor(private readonly startSpellsService: StartSpellsService) {}
 
-    @Post(':id/start')
+    @Post('/start-all')
+    @HttpCode(HttpStatus.ACCEPTED)
+    startAllSpellsJob() {
+        return this.startSpellsService.startAllSpellsJob();
+    }
+
+    @Post('/:id/start')
     @HttpCode(HttpStatus.ACCEPTED)
     startSpellJob(@Param('id') id: string) {
         return this.startSpellsService.startSpellJob(id);
