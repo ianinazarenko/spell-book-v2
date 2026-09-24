@@ -15,7 +15,7 @@ import { CastStatus } from './components/CastStatus';
 import { RitualControls } from './components/RitualControls';
 import { SpellStatus } from '../../backend/src/generated/prisma/enums';
 import { loadConfigs } from '@/lib/repository/configs/configs';
-import { loadSpells } from '@/lib/repository/spells/spells';
+import { createSpell, loadSpells } from '@/lib/repository/spells/spells';
 import { SpellConfig } from '../../backend/src/generated/prisma/client';
 import { DEFAULT_CONFIGS } from './constants/configs';
 import { updateConfigs } from '@/lib/repository/configs/configs';
@@ -224,6 +224,7 @@ export default function Home() {
 
     // --- NEW LOGIC ---
     // --- Back-end sync ---
+    const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
 
     async function handleConfigChange(body: {
         iterationsTotal: number;
@@ -232,44 +233,26 @@ export default function Home() {
         await updateConfigs(body);
     }
 
+    // Add spell
     async function handleSubmit(
         e: React.SubmitEvent,
-        body: { spell: string; duration: string | number }
+        body: { spell: string }
     ): Promise<{ success: boolean }> {
         e.preventDefault();
 
-        if (!body.spell || !body.duration) {
-            throw new Error('There should be spell and duration values');
+        if (!body.spell) {
+            throw new Error('There should be spell value');
         }
 
-        try {
-            const res = await fetch(`${baseUrl}/spells`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            });
+        const spell = await createSpell({ spell: body.spell });
 
-            const data = (await res.json()) as SpellItem & { message?: string };
-
-            if (!res.ok) {
-                const message = data.message ? data.message : null;
-                throw new Error(message ?? `Request failed: ${res.status} ${res.statusText}`);
-            }
-
-            setSpells((prev) => [...prev, data]);
-
-            // TODO: temporary
-            console.log('Job created:', data);
+        if (spell) {
+            setSpells((prev) => [...prev, spell]);
             return { success: true };
-        } catch (e: unknown) {
-            const message = e instanceof Error ? e.message : 'Unknown error';
-            console.warn('Could not create spell!', message);
-
-            return { success: false };
         }
-    }
 
-    const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
+        return { success: false };
+    }
 
     useEffect(() => {
         setIsLoading(true);

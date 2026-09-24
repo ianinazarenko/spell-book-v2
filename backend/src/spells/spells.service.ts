@@ -10,8 +10,6 @@ export class SpellsService {
     async createSpell(dto: CreateSpellDto): Promise<SpellJob> {
         const data = {
             spellText: dto.spell,
-            durationMin: dto.duration,
-            iterationsTotal: dto.duration,
         };
 
         return this.prisma.spellJob.create({ data });

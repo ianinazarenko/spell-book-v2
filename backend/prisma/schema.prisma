@@ -15,15 +15,11 @@ enum SpellStatus {
 }
 
 model SpellJob {
-  id                  String      @id @default(cuid())
-  spellText           String      @map("spell_text") @db.Text
-  iterationsTotal     Int         @map("iterations_total")
-  iterationsCompleted Int         @default(0) @map("iterations_completed")
-  durationMin         Int         @default(60) @map("duration_min")
-  status              SpellStatus @default(QUEUED)
-  createdAt           DateTime    @default(now()) @map("created_at")
-  updatedAt           DateTime    @updatedAt @map("updated_at")
-  errorMessage        String?     @map("error_message") @db.Text
+  id           String   @id @default(cuid())
+  spellText    String   @map("spell_text") @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  errorMessage String?  @map("error_message") @db.Text
 
   @@map("spell_jobs")
 }

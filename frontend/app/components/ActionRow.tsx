@@ -5,10 +5,7 @@ import { useEffect, useOptimistic, useRef, useState, useTransition } from 'react
 interface ActionRowProps {
     isCasting: boolean;
     initialDur: number | null;
-    onAdd: (
-        e: React.SubmitEvent,
-        data: { spell: string; duration: string | number }
-    ) => Promise<{ success: boolean }>;
+    onAdd: (e: React.SubmitEvent, data: { spell: string }) => Promise<{ success: boolean }>;
     onConfigChange: (data: {
         iterationsTotal: number;
         durationMin: number | null;
@@ -57,7 +54,7 @@ export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: Acti
 
         startTransition(async () => {
             setOptimistincSpell(clearedState);
-            const { success } = await onAdd(e, { spell: trimmedSpell, duration });
+            const { success } = await onAdd(e, { spell: trimmedSpell });
 
             if (success) {
                 setSpell(clearedState);
