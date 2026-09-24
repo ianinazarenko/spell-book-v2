@@ -4,7 +4,7 @@ export class CreateConfigDto {
     @IsInt()
     @IsNotEmpty({ message: 'Iterations count should be specified' })
     @Min(1, { message: 'At least 1 iteration' })
-    @Max(8888, { message: 'At most 8888 iterations' })
+    @Max(10800, { message: 'At most 8888 iterations' })
     iterationsTotal: number;
 
     @IsInt()

@@ -1,22 +1,30 @@
+import { SpellConfig } from '../../../backend/src/generated/prisma/client';
 import styles from './ActionRow.module.css';
 import { useEffect, useOptimistic, useRef, useState, useTransition } from 'react';
 
 interface ActionRowProps {
+    isCasting: boolean;
+    initialDur: number | null;
     onAdd: (
         e: React.SubmitEvent,
         data: { spell: string; duration: string | number }
     ) => Promise<{ success: boolean }>;
-    isCasting: boolean;
+    onConfigChange: (data: {
+        iterationsTotal: number;
+        durationMin: number | null;
+    }) => Promise<void>;
 }
 
-export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
+export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: ActionRowProps) {
     // --- Constants ---
     const BTN_LABEL = 'Add';
+    const SPELL_STEP_SEC = 2;
 
     // --- State ---
     const [spell, setSpell] = useState<string>('');
-    const [duration, setDuration] = useState<number>(60);
+    const [duration, setDuration] = useState<number>(initialDur || 60);
 
+    // Spell optimistic update
     const [isPending, startTransition] = useTransition();
     const [optimisticSpell, setOptimistincSpell] = useOptimistic(
         spell,
@@ -33,6 +41,12 @@ export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
 
     function handleDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
         setDuration(Math.max(1, parseInt(e.target.value) || 1));
+    }
+
+    function handleConfigChange() {
+        const durationSec = duration * 60;
+        const iterationsTotal = Math.round(durationSec / SPELL_STEP_SEC);
+        onConfigChange({ iterationsTotal, durationMin: duration });
     }
 
     function handleSubmit(e: React.SubmitEvent) {
@@ -53,11 +67,18 @@ export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
         });
     }
 
+    // --- Effects ---
     useEffect(() => {
         if (!isPending) {
             spellInputRef.current?.focus();
         }
     }, [isPending]);
+
+    useEffect(() => {
+        if (initialDur) {
+            setDuration(initialDur);
+        }
+    }, [initialDur]);
 
     return (
         <div className={styles.intro}>
@@ -73,10 +94,11 @@ export function ActionRow({ onAdd, isCasting }: ActionRowProps) {
                     min='1'
                     max='360'
                     value={duration}
-                    onChange={handleDurationChange}
                     className={`${styles.input} ${styles.inputSmall}`}
                     disabled={isCasting || isPending}
                     title='Duration in minutes'
+                    onChange={handleDurationChange}
+                    onBlur={handleConfigChange}
                 />
 
                 <input

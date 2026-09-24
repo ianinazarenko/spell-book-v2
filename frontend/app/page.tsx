@@ -4,7 +4,7 @@
 import type { SpellItem } from '@shared/spells/spells.types';
 
 import styles from './page.module.css';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useOptimistic, useTransition } from 'react';
 import { useLocalStorage } from '@/lib/hooks/useStorage';
 
 // Компоненты
@@ -13,6 +13,12 @@ import { ActionRow } from './components/ActionRow';
 import { SpellList } from './components/SpellList';
 import { CastStatus } from './components/CastStatus';
 import { RitualControls } from './components/RitualControls';
+import { SpellStatus } from '../../backend/src/generated/prisma/enums';
+import { loadConfigs } from '@/lib/repository/configs/configs';
+import { loadSpells } from '@/lib/repository/spells/spells';
+import { SpellConfig } from '../../backend/src/generated/prisma/client';
+import { DEFAULT_CONFIGS } from './constants/configs';
+import { updateConfigs } from '@/lib/repository/configs/configs';
 
 export default function Home() {
     // --- Константы ---
@@ -25,7 +31,14 @@ export default function Home() {
     const baseUrl = process.env.BASE_URL ?? 'http://localhost:8000';
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [spells, setSpells] = useState<SpellItem[]>([]);
-    const spellsList: string[] = spells.map((s) => s.spellText);
+
+    const [isPending, startTransition] = useTransition();
+    const [optmSpells, optmDeleteSpell] = useOptimistic(
+        spells,
+        (currentItems: SpellItem[], id: string) => currentItems.filter((item) => item.id !== id)
+    );
+
+    const spellsList: string[] = optmSpells.map((s) => s.spellText);
     // --- end region ---
 
     // --- Состояние (UI) ---
@@ -44,6 +57,10 @@ export default function Home() {
     const spellsRef = useRef(spells);
     const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
+    // ---
+
+    const [castingSpell, setCastingSpell] = useState<SpellItem | null>(null);
+
     // Синхронизируем "зеркало" для интервала
     // useEffect(() => {
     // spellsRef.current = spells;
@@ -55,8 +72,31 @@ export default function Home() {
     }
 
     // --- Магические действия (CRUD) ---
+
+    async function deleteSpell(id: string) {
+        if (!id) return;
+
+        startTransition(async () => {
+            optmDeleteSpell(id);
+
+            await fetch(`${baseUrl}/spells/${id}/delete`, {
+                method: 'DELETE',
+            });
+
+            setSpells((prev) => prev.filter((i) => i.id !== id));
+        });
+    }
+
     function removeSpell(indexToRemove: number) {
-        setSpells((prev: SpellItem[]) => prev.filter((_, index) => index !== indexToRemove));
+        // setSpells((prev: SpellItem[]) => prev.filter((_, index) => index !== indexToRemove));
+
+        console.log(indexToRemove);
+
+        const id = spells[indexToRemove].id;
+
+        console.log(id);
+
+        deleteSpell(id);
     }
 
     function clearAll() {
@@ -75,20 +115,81 @@ export default function Home() {
     }
 
     // --- Управление кастом ---
-    function castSpell() {
-        if (isCasting) return;
+    interface SpellStart {
+        message: string;
+        status: SpellStatus;
+    }
+    async function castSpell() {
+        // if (isCasting) return;
 
-        setCastCount(0);
-        setIsCasting(true);
+        // setCastCount(0);
+        // setIsCasting(true);
 
-        intervalIdRef.current = setInterval(() => {
-            if (spellsRef.current.length > 0) {
-                console.log('✨ Casting ritual:', spellsRef.current);
-                setCastCount((prev) => prev + 1);
-            } else {
-                console.log('🌑 The book is empty, no spells to cast.');
+        // intervalIdRef.current = setInterval(() => {
+        //     if (spellsRef.current.length > 0) {
+        //         console.log('✨ Casting ritual:', spellsRef.current);
+        //         setCastCount((prev) => prev + 1);
+        //     } else {
+        //         console.log('🌑 The book is empty, no spells to cast.');
+        //     }
+        // }, SPEED);
+
+        const spell = spells[0];
+        const id = spell?.id;
+
+        if (!id) return;
+
+        try {
+            const res = await fetch(`${baseUrl}/spells/${id}/start`, { method: 'POST' });
+            const data = res.json();
+
+            if (!res.ok) {
+                const message = data.message ? data.message : null;
+                throw new Error(message ?? `Request failed: ${res.status} ${res.statusText}`);
             }
-        }, SPEED);
+            setCastingSpell(() => ({ ...spell, status: 'RUNNING' }));
+            startPolling();
+        } catch {
+            console.warn(e);
+            setCastingSpell(null);
+        }
+    }
+
+    const timerIdRef = useRef<NodeJS.Timeout | null>(null);
+
+    function startPolling() {
+        timerIdRef.current = setInterval(async () => {
+            if (
+                !castingSpell ||
+                castingSpell.status === 'COMPLETED' ||
+                castingSpell.status === 'FAILED'
+            ) {
+                stopPolling();
+            }
+
+            try {
+                if (!castingSpell?.id) return;
+                const res = await fetch(`${baseUrl}/spells/${castingSpell.id}`);
+                const data = (await res.json()) as SpellItem;
+
+                setCastingSpell((prev) =>
+                    prev
+                        ? {
+                              ...prev,
+                              status: data.status,
+                              iterationsCompleted: data.iterationsCompleted,
+                          }
+                        : null
+                );
+            } catch (e) {
+                console.log(e);
+            }
+        }, 2000);
+    }
+
+    function stopPolling() {
+        if (!timerIdRef.current) return;
+        clearInterval(timerIdRef.current);
     }
 
     function stopSpell() {
@@ -123,15 +224,12 @@ export default function Home() {
 
     // --- NEW LOGIC ---
     // --- Back-end sync ---
-    async function getSpells() {
-        try {
-            setIsLoading(true);
-            setSpells([]);
-        } catch (e: unknown) {
-            console.warn(e);
-        } finally {
-            setIsLoading(false);
-        }
+
+    async function handleConfigChange(body: {
+        iterationsTotal: number;
+        durationMin: number | null;
+    }) {
+        await updateConfigs(body);
     }
 
     async function handleSubmit(
@@ -171,6 +269,18 @@ export default function Home() {
         }
     }
 
+    const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
+
+    useEffect(() => {
+        setIsLoading(true);
+        Promise.all([loadConfigs(), loadSpells()])
+            .then(([configs, spells]) => {
+                setConfigs(configs || DEFAULT_CONFIGS);
+                setSpells(spells || []);
+            })
+            .finally(() => setIsLoading(false));
+    }, []);
+
     return (
         <div className={styles.page}>
             <main className={styles.main}>
@@ -178,7 +288,9 @@ export default function Home() {
 
                 <div>
                     <ActionRow
+                        initialDur={configs.durationMin}
                         onAdd={handleSubmit}
+                        onConfigChange={handleConfigChange}
                         isCasting={isCasting}
                     />
 
