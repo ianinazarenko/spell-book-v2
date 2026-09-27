@@ -21,7 +21,15 @@ export async function fetchData<T>({
         const data = (await res.json()) as T;
 
         if (!res.ok) {
-            throw new Error(errorMessage + `; response status: ${res.status}`);
+            const message =
+                typeof data === 'object' &&
+                data !== null &&
+                'message' in data &&
+                typeof data.message === 'string'
+                    ? data.message
+                    : errorMessage;
+
+            throw new Error(`${message}; response status: ${res.status}`);
         }
 
         return data;

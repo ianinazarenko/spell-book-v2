@@ -46,16 +46,16 @@ export default function Home() {
     const [spells, setSpells] = useState<SpellItem[]>([]);
     const [optmSpells, optmDeleteSpell] = useOptimistic(
         spells,
-        (currentItems: SpellItem[], id: string) => currentItems.filter((item) => item.id !== id)
+        (currentItems: SpellItem[], idList: string[]) =>
+            currentItems.filter((item) => !idList.includes(item.id))
     );
 
     const [isCasting, setIsCasting] = useState<boolean>(false);
     const [castCount, setCastCount] = useState<number>(0);
     const spellsRef = useRef(spells); // Пока не используется
-    const pollingIntervalId = useRef<NodeJS.Timeout | null>(null);
+    const timerIdRef = useRef<NodeJS.Timeout | null>(null);
 
     // Значения для отображения
-    const spellsList: string[] = optmSpells.map((s) => s.spellText);
     const areSpellsSame = compareSpells(); // Пока не используется
     const spellsStr = JSON.stringify(spells);
 
@@ -95,27 +95,29 @@ export default function Home() {
     }
 
     // Удаление заклинаний
-    function removeSpell(indexToRemove: number) {
-        const id = spells[indexToRemove].id;
-
+    function removeSpell(id: string) {
         startTransition(async () => {
-            optmDeleteSpell(id);
-            const { success } = await deleteSpell(id);
+            optmDeleteSpell([id]);
+            const result = await deleteSpell(id);
 
-            if (success) {
+            console.log(result);
+
+            if (result.success) {
                 setSpells((prev) => prev.filter((i) => i.id !== id));
             }
         });
     }
 
     async function clearAll() {
-        try {
-            await clearSpells();
-            setSpells([]);
-            setCastCount(0);
-        } catch (e) {
-            showError(e, 'clearAll');
-        }
+        startTransition(async () => {
+            optmDeleteSpell(spells.map((s) => s.id));
+            const result = await clearSpells();
+
+            if (result.success) {
+                setSpells([]);
+                setCastCount(0);
+            }
+        });
     }
 
     // Запуск и остановка ритуала
@@ -133,7 +135,7 @@ export default function Home() {
 
     // Периодическое чтение прогресса
     function startPolling() {
-        pollingIntervalId.current = setInterval(async () => {
+        timerIdRef.current = setInterval(async () => {
             const config = await loadConfigs();
 
             if (!config || config.status !== 'RUNNING') {
@@ -147,9 +149,9 @@ export default function Home() {
     }
 
     function stopPolling() {
-        if (!pollingIntervalId.current) return;
-        clearInterval(pollingIntervalId.current);
-        pollingIntervalId.current = null;
+        if (!timerIdRef.current) return;
+        clearInterval(timerIdRef.current);
+        timerIdRef.current = null;
     }
 
     // При открытии страницы загружаем данные с бэка
@@ -185,14 +187,14 @@ export default function Home() {
 
                 <div>
                     <ActionRow
-                        initialDur={optmConfigs.durationMin}
+                        initialDur={configs.durationMin}
                         onAdd={handleSubmit}
                         onConfigChange={handleConfigChange}
                         isCasting={isCasting}
                     />
 
                     <SpellList
-                        spells={spellsList}
+                        spells={optmSpells}
                         onRemove={removeSpell}
                     />
 
