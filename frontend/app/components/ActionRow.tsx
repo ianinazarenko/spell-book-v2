@@ -5,7 +5,7 @@ import { useEffect, useOptimistic, useRef, useState, useTransition } from 'react
 interface ActionRowProps {
     isCasting: boolean;
     initialDur: number | null;
-    onAdd: (e: React.SubmitEvent, data: { spell: string }) => Promise<{ success: boolean }>;
+    onAdd: (data: { spell: string }) => Promise<{ success: boolean }>;
     onConfigChange: (data: {
         iterationsTotal: number;
         durationMin: number | null;
@@ -20,6 +20,7 @@ export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: Acti
     // --- State ---
     const [spell, setSpell] = useState<string>('');
     const [duration, setDuration] = useState<number>(initialDur || 60);
+    const [prevDuration, setPrevDuration] = useState<number>(duration);
 
     // Spell optimistic update
     const [isPending, startTransition] = useTransition();
@@ -37,16 +38,22 @@ export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: Acti
     }
 
     function handleDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setPrevDuration(duration);
         setDuration(Math.max(1, parseInt(e.target.value) || 1));
     }
 
-    function handleConfigChange() {
+    function handleConfigChange(e: React.ChangeEvent<HTMLInputElement>) {
+        if (prevDuration === duration) return;
+        setPrevDuration(duration); // if there was only blur event
+
         const durationSec = duration * 60;
         const iterationsTotal = Math.round(durationSec / SPELL_STEP_SEC);
+
         onConfigChange({ iterationsTotal, durationMin: duration });
     }
 
     function handleSubmit(e: React.SubmitEvent) {
+        e.preventDefault();
         const trimmedSpell = spell.trim();
         if (!trimmedSpell) return;
 
@@ -54,13 +61,11 @@ export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: Acti
 
         startTransition(async () => {
             setOptimistincSpell(clearedState);
-            const { success } = await onAdd(e, { spell: trimmedSpell });
+            const { success } = await onAdd({ spell: trimmedSpell });
 
             if (success) {
                 setSpell(clearedState);
             }
-
-            spellInputRef.current?.focus();
         });
     }
 
@@ -72,7 +77,8 @@ export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: Acti
     }, [isPending]);
 
     useEffect(() => {
-        if (initialDur) {
+        if (initialDur && initialDur !== duration) {
+            if (duration) setPrevDuration(duration);
             setDuration(initialDur);
         }
     }, [initialDur]);
@@ -81,11 +87,7 @@ export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: Acti
         <div className={styles.intro}>
             <p className={styles.durationHint}>duration is in minutes</p>
 
-            <form
-                autoComplete='off'
-                className={styles.actionRow}
-                onSubmit={handleSubmit}
-            >
+            <div className={styles.actionRow}>
                 <input
                     type='number'
                     min='1'
@@ -98,24 +100,30 @@ export function ActionRow({ initialDur, onAdd, onConfigChange, isCasting }: Acti
                     onBlur={handleConfigChange}
                 />
 
-                <input
-                    type='text'
-                    placeholder='Enter a new spell...'
-                    value={optimisticSpell}
-                    ref={spellInputRef}
-                    onChange={handleSpellChange}
-                    className={`${styles.input} ${styles.inputMain}`}
-                    disabled={isPending}
-                />
-
-                <button
-                    type='submit'
-                    className={`${styles.btn} ${styles.btnPrimary}`}
-                    disabled={isSubmitDisabled}
+                <form
+                    autoComplete='off'
+                    className={styles.actionRow}
+                    onSubmit={handleSubmit}
                 >
-                    {BTN_LABEL}
-                </button>
-            </form>
+                    <input
+                        type='text'
+                        placeholder='Enter a new spell...'
+                        value={optimisticSpell}
+                        ref={spellInputRef}
+                        onChange={handleSpellChange}
+                        className={`${styles.input} ${styles.inputMain}`}
+                        disabled={isPending}
+                    />
+
+                    <button
+                        type='submit'
+                        className={`${styles.btn} ${styles.btnPrimary}`}
+                        disabled={isSubmitDisabled}
+                    >
+                        {BTN_LABEL}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }
