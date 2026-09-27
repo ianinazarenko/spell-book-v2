@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { SpellConfig } from '../generated/prisma/client.js';
 import { CreateConfigDto } from './create-config.dto.js';
-
-const DEFAULT_COUNT = 1777;
-const CONFIG_ID = 'spell-configs';
+import { DEFAULT_COUNT, CONFIG_ID } from '../shared/config/constants.js';
 
 @Injectable()
 export class SpellConfigService {
@@ -26,7 +24,7 @@ export class SpellConfigService {
         return this.prisma.spellConfig.upsert({
             where: { id: CONFIG_ID },
             create: { id: CONFIG_ID, iterationsTotal },
-            update: { iterationsTotal, durationMin: dto.durationMin },
+            update: { iterationsTotal, durationMin: dto.durationMin, iterationsCompleted: 0 },
         });
     }
 }
