@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { SpellConfig } from '../generated/prisma/client.js';
 import { CreateConfigDto } from './create-config.dto.js';
@@ -33,5 +33,17 @@ export class SpellConfigService {
             where: { id: CONFIG_ID },
             data: { iterationsCompleted: 0 },
         });
+    }
+
+    async getCount(): Promise<number> {
+        const config = await this.prisma.spellConfig.findUnique({
+            where: { id: CONFIG_ID },
+        });
+
+        if (!config) {
+            throw new NotFoundException({ message: 'No configs found, so no count is here' });
+        }
+
+        return config?.iterationsCompleted;
     }
 }

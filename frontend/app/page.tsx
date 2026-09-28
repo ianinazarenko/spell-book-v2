@@ -13,8 +13,7 @@ import { ActionRow } from './components/ActionRow';
 import { SpellList } from './components/SpellList';
 import { CastStatus } from './components/CastStatus';
 import { RitualControls } from './components/RitualControls';
-import { SpellStatus } from '../../backend/src/generated/prisma/enums';
-import { clearCount, loadConfigs } from '@/lib/repository/configs/configs';
+import { clearCount, getCount, loadConfigs } from '@/lib/repository/configs/configs';
 import {
     castSpells,
     clearSpells,
@@ -132,13 +131,21 @@ export default function Home() {
     async function castSpell() {
         if (isCasting || !spells.length) return;
 
-        castSpells();
-        setIsCasting(true);
+        const { status } = await castSpells();
+
+        if (status === 'RUNNING') {
+            setIsCasting(true);
+        } else {
+            setIsCasting(false);
+        }
     }
 
     async function stopSpell() {
-        setIsCasting(false);
-        await stopCasting();
+        const { status } = await stopCasting();
+
+        if (status !== 'RUNNING') {
+            setIsCasting(false);
+        }
     }
 
     // Периодическое чтение прогресса
@@ -151,7 +158,9 @@ export default function Home() {
                 return;
             }
 
-            console.log('✨ Casting ritual:', config.iterationsCompleted);
+            const count = await getCount();
+            console.log('✨ Casting ritual:', count);
+            setConfigs((prev) => ({ ...prev, iterationsCompleted: count }));
             // set count here
         }, 2000);
     }

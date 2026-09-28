@@ -21,4 +21,9 @@ export class SpellConfigController {
     clearCount(): Promise<SpellConfig> {
         return this.configService.clearCount();
     }
+
+    @Get('/count')
+    getCount(): Promise<number> {
+        return this.configService.getCount();
+    }
 }

@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Get, Post } from '@nestjs/common';
 import { CastSpellsService } from './cast-spells.service.js';
 import { SpellConfig } from '../generated/prisma/client.js';
 

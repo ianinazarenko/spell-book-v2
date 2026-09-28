@@ -25,7 +25,7 @@ export async function updateConfigs(body: {
     }
 
     try {
-        return await fetchData<SpellConfig>({
+        return fetchData<SpellConfig>({
             route: `${BASE_URL}/update`,
             method: 'POST',
             body,
@@ -43,5 +43,19 @@ export async function clearCount(): Promise<SpellConfig | undefined> {
         });
     } catch (e) {
         showError(e, 'clearCount');
+    }
+}
+
+export async function getCount(): Promise<number> {
+    try {
+        const count = await fetchData<number>({
+            method: 'GET',
+            route: `${BASE_URL}/count`,
+        });
+
+        return count ?? 0;
+    } catch (e) {
+        showError(e, 'getCount');
+        return 0;
     }
 }

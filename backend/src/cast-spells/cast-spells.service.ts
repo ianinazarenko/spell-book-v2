@@ -16,7 +16,7 @@ export class CastSpellsService {
 
     async castAllSpellsJob(): Promise<SpellConfig> {
         const spells = await this.prisma.spellJob.findMany({
-            orderBy: { createdAt: 'desc' },
+            orderBy: { createdAt: 'asc' },
         });
 
         const config = await this.prisma.spellConfig.findUnique({ where: { id: CONFIG_ID } });
