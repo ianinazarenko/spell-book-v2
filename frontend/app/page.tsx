@@ -22,6 +22,7 @@ import {
     deleteSpell,
     loadSavedSpells,
     loadSpells,
+    restoreSpells,
     saveSpells,
     stopCasting,
 } from '@/lib/repository/spells/spells';
@@ -59,7 +60,8 @@ export default function Home() {
     const timerIdRef = useRef<NodeJS.Timeout | null>(null);
 
     // Значения для отображения
-    const areSpellsSame = compareSpells(); // Пока не используется
+    const areSpellsSame = compareSpells();
+    const canRestore = savedSpells.length > 0 && !areSpellsSame;
 
     function compareSpells() {
         const spellsIds = spells.map((s) => s.id);
@@ -166,7 +168,10 @@ export default function Home() {
         setSavedSpells(savedSpells);
     }
 
-    function handleRestore() {}
+    async function handleRestore() {
+        const restoredSpells = await restoreSpells();
+        setSpells(restoredSpells);
+    }
 
     // При открытии страницы загружаем данные с бэка
     useEffect(() => {
@@ -229,10 +234,10 @@ export default function Home() {
                     onStop={stopSpell}
                     onClear={clearAll}
                     onSave={handleSave}
-                    onRestore={() => {}}
+                    onRestore={handleRestore}
                     isCasting={isCasting}
                     hasSpells={spells.length > 0}
-                    canRestore={false}
+                    canRestore={canRestore}
                     areSpellsSame={areSpellsSame}
                     spells={spells}
                 />

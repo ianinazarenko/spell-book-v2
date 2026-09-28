@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { BaseAnswer, SavedSpellItem } from '../shared/spells/spells.types.js';
+import { SpellJob } from '../generated/prisma/client.js';
 
 @Injectable()
 export class SaveSpellsService {
@@ -35,5 +36,24 @@ export class SaveSpellsService {
         ]);
 
         return currentSpells;
+    }
+
+    async restoreSpells() {
+        const savedSpells: SavedSpellItem[] = await this.prisma.savedSpell.findMany();
+
+        if (!savedSpells.length) {
+            throw new NotFoundException({
+                message: 'There is no saved spells to restore',
+            });
+        }
+
+        await this.prisma.$transaction([
+            this.prisma.spellJob.deleteMany(),
+            this.prisma.spellJob.createMany({ data: savedSpells }),
+        ]);
+
+        const newSpells: SpellJob[] = await this.prisma.spellJob.findMany();
+
+        return newSpells;
     }
 }

@@ -7,6 +7,7 @@ import {
 } from '@shared/spells/spells.types';
 import { fetchData } from '..';
 import { getErrorMessage, showError } from '../utils';
+import { SpellJob } from '../../../../backend/src/generated/prisma/client';
 
 const BASE_URL = '/spells';
 
@@ -105,14 +106,28 @@ export async function loadSavedSpells(): Promise<SavedSpellItem[]> {
 
 export async function saveSpells(): Promise<SavedSpellItem[]> {
     try {
-        const result = await fetchData<SavedSpellItem[]>({
+        const data = await fetchData<SavedSpellItem[]>({
             method: 'POST',
             route: `${BASE_URL}/save`,
         });
 
-        return result ?? [];
+        return data ?? [];
     } catch (e) {
         showError(e, 'saveSpells');
+        return [];
+    }
+}
+
+export async function restoreSpells(): Promise<SpellJob[]> {
+    try {
+        const data = await fetchData<SpellJob[]>({
+            method: 'POST',
+            route: `${BASE_URL}/restore`,
+        });
+
+        return data ?? [];
+    } catch (e) {
+        showError(e, 'restoreSpells');
         return [];
     }
 }
