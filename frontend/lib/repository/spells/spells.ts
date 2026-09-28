@@ -1,18 +1,25 @@
-import { BaseAnswer, SpellConfig, SpellItem, SpellStatus } from '@shared/spells/spells.types';
+import {
+    BaseAnswer,
+    SavedSpellItem,
+    SpellConfig,
+    SpellItem,
+    SpellStatus,
+} from '@shared/spells/spells.types';
 import { fetchData } from '..';
 import { getErrorMessage, showError } from '../utils';
 
 const BASE_URL = '/spells';
 
-export async function loadSpells(): Promise<SpellItem[] | undefined> {
+export async function loadSpells(): Promise<SpellItem[]> {
     try {
         const data = await fetchData<SpellItem[]>({
             route: '/spells',
         });
 
-        return data;
+        return data ?? [];
     } catch (e) {
         showError(e);
+        return [];
     }
 }
 
@@ -30,7 +37,7 @@ export async function createSpell(body: { spell: string }): Promise<SpellItem | 
     }
 }
 
-export async function deleteSpell(id: string) {
+export async function deleteSpell(id: string): Promise<BaseAnswer> {
     try {
         return await fetchData<BaseAnswer>({
             method: 'DELETE',
@@ -42,7 +49,7 @@ export async function deleteSpell(id: string) {
     }
 }
 
-export async function clearSpells() {
+export async function clearSpells(): Promise<BaseAnswer> {
     try {
         return await fetchData<BaseAnswer>({
             method: 'DELETE',
@@ -82,16 +89,30 @@ export async function stopCasting(): Promise<{ status: SpellStatus }> {
     }
 }
 
-export async function saveSpells(): Promise<BaseAnswer> {
+export async function loadSavedSpells(): Promise<SavedSpellItem[]> {
     try {
-        const result = await fetchData<BaseAnswer>({
+        const data = await fetchData<SavedSpellItem[]>({
+            method: 'GET',
+            route: `${BASE_URL}/saved`,
+        });
+
+        return data ?? [];
+    } catch (e) {
+        showError(e, 'getSavedSpells');
+        return [];
+    }
+}
+
+export async function saveSpells(): Promise<SavedSpellItem[]> {
+    try {
+        const result = await fetchData<SavedSpellItem[]>({
             method: 'POST',
             route: `${BASE_URL}/save`,
         });
 
-        return result;
+        return result ?? [];
     } catch (e) {
         showError(e, 'saveSpells');
-        return { success: false, message: getErrorMessage(e) };
+        return [];
     }
 }

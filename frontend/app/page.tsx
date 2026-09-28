@@ -1,7 +1,7 @@
 'use client';
 
 // Types
-import type { SpellItem } from '@shared/spells/spells.types';
+import { SavedSpellItem, type SpellItem } from '@shared/spells/spells.types';
 
 import styles from './page.module.css';
 import { useEffect, useState, useRef, useOptimistic, useTransition } from 'react';
@@ -20,6 +20,7 @@ import {
     clearSpells,
     createSpell,
     deleteSpell,
+    loadSavedSpells,
     loadSpells,
     saveSpells,
     stopCasting,
@@ -27,7 +28,6 @@ import {
 import { SpellConfig } from '../../backend/src/generated/prisma/client';
 import { DEFAULT_CONFIGS } from './constants/configs';
 import { updateConfigs } from '@/lib/repository/configs/configs';
-import { showError } from '@/lib/repository/utils';
 
 export default function Home() {
     const SPEED = 2000;
@@ -51,6 +51,8 @@ export default function Home() {
             currentItems.filter((item) => !idList.includes(item.id))
     );
 
+    const [savedSpells, setSavedSpells] = useState<SavedSpellItem[]>([]);
+
     const [isCasting, setIsCasting] = useState<boolean>(false);
     const [castCount, setCastCount] = useState<number>(0);
     const spellsRef = useRef(spells); // Пока не используется
@@ -60,7 +62,11 @@ export default function Home() {
     const areSpellsSame = compareSpells(); // Пока не используется
 
     function compareSpells() {
-        // return JSON.stringify(spells) === JSON.stringify(storedSpells);
+        const spellsIds = spells.map((s) => s.id);
+        const savedIds = savedSpells.map((s) => s.id);
+        return (
+            spellsIds.length === savedIds.length && spellsIds.every((id) => savedIds.includes(id))
+        );
     }
 
     // Ввод заклинания и настройки длительности
@@ -156,19 +162,25 @@ export default function Home() {
 
     //Сохранение и восстановление из отдельной таблицы
     async function handleSave() {
-        await saveSpells();
+        const savedSpells = await saveSpells();
+        setSavedSpells(savedSpells);
     }
 
     function handleRestore() {}
 
     // При открытии страницы загружаем данные с бэка
     useEffect(() => {
-        Promise.all([loadConfigs(), loadSpells()]).then(([configs, spells]) => {
-            setConfigs(configs || DEFAULT_CONFIGS);
-            setSpells(spells || []);
-            setIsCasting(configs?.status === 'RUNNING');
-            setCastCount(configs?.iterationsCompleted || 0);
-        });
+        Promise.all([loadConfigs(), loadSpells(), loadSavedSpells()]).then(
+            ([configs, spells, savedSpells]) => {
+                setConfigs(configs || DEFAULT_CONFIGS);
+                setSpells(spells || []);
+                setSavedSpells(savedSpells);
+                setIsCasting(configs?.status === 'RUNNING');
+                setCastCount(configs?.iterationsCompleted || 0);
+
+                console.log(spells, savedSpells);
+            }
+        );
     }, []);
 
     // При изменении isCasting запускаем или останавливаем опрос
@@ -221,7 +233,7 @@ export default function Home() {
                     isCasting={isCasting}
                     hasSpells={spells.length > 0}
                     canRestore={false}
-                    areSpellsSame={false}
+                    areSpellsSame={areSpellsSame}
                     spells={spells}
                 />
             </main>

@@ -8,7 +8,7 @@ export async function fetchData<T>({
     query = null,
     body = null,
     errorMessage = '[fetchData] request failed',
-}: FetchParams): Promise<T> {
+}: FetchParams): Promise<T | never> {
     const params = getParamsString(query);
 
     try {
