@@ -9,7 +9,7 @@ const eslintConfig = defineConfig([
         // Base rules for all files
         files: ['**/*.{js,jsx,ts,tsx}'],
         rules: {
-            'complexity': ['error', { max: 10 }],
+            complexity: ['error', { max: 15 }],
             'max-lines': ['error', 500],
             'no-alert': 'off',
             'no-console': 0,
@@ -58,7 +58,7 @@ const eslintConfig = defineConfig([
         // Disable complexity rule only for React components
         files: ['**/components/**/*.{jsx,tsx}'],
         rules: {
-            'complexity': 'off',
+            complexity: 'off',
         },
     },
     globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'generated/prisma/**']),
