@@ -21,6 +21,7 @@ import {
     createSpell,
     deleteSpell,
     loadSpells,
+    saveSpells,
     stopCasting,
 } from '@/lib/repository/spells/spells';
 import { SpellConfig } from '../../backend/src/generated/prisma/client';
@@ -153,6 +154,13 @@ export default function Home() {
         timerIdRef.current = null;
     }
 
+    //Сохранение и восстановление из отдельной таблицы
+    async function handleSave() {
+        await saveSpells();
+    }
+
+    function handleRestore() {}
+
     // При открытии страницы загружаем данные с бэка
     useEffect(() => {
         Promise.all([loadConfigs(), loadSpells()]).then(([configs, spells]) => {
@@ -208,7 +216,7 @@ export default function Home() {
                     onCast={castSpell}
                     onStop={stopSpell}
                     onClear={clearAll}
-                    onSave={() => {}}
+                    onSave={handleSave}
                     onRestore={() => {}}
                     isCasting={isCasting}
                     hasSpells={spells.length > 0}

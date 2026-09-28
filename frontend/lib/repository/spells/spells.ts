@@ -1,6 +1,6 @@
 import { BaseAnswer, SpellConfig, SpellItem, SpellStatus } from '@shared/spells/spells.types';
 import { fetchData } from '..';
-import { showError } from '../utils';
+import { getErrorMessage, showError } from '../utils';
 
 const BASE_URL = '/spells';
 
@@ -38,7 +38,7 @@ export async function deleteSpell(id: string) {
         });
     } catch (e) {
         showError(e, 'deleteSpell');
-        return { success: false, message: e instanceof Error ? e.message : 'Error' };
+        return { success: false, message: getErrorMessage(e) };
     }
 }
 
@@ -50,7 +50,7 @@ export async function clearSpells() {
         });
     } catch (e) {
         showError(e, 'deleteSpell');
-        return { success: false, message: e instanceof Error ? e.message : 'Error' };
+        return { success: false, message: getErrorMessage(e) };
     }
 }
 
@@ -79,5 +79,19 @@ export async function stopCasting(): Promise<{ status: SpellStatus }> {
     } catch (e) {
         showError(e, 'stopCasting');
         return { status: 'FAILED' };
+    }
+}
+
+export async function saveSpells(): Promise<BaseAnswer> {
+    try {
+        const result = await fetchData<BaseAnswer>({
+            method: 'POST',
+            route: `${BASE_URL}/save`,
+        });
+
+        return result;
+    } catch (e) {
+        showError(e, 'saveSpells');
+        return { success: false, message: getErrorMessage(e) };
     }
 }

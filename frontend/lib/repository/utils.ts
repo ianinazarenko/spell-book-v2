@@ -9,6 +9,10 @@ export function getBodyString(body: BodyObj): string | null {
 }
 
 export function showError(e: unknown, source: string = ''): void {
-    const message = e instanceof Error ? e.message : 'Unknown error';
+    const message = getErrorMessage(e);
     console.warn(`${source} ${message}`.trim());
+}
+
+export function getErrorMessage(e: unknown, custromText?: string): string {
+    return e instanceof Error ? e.message : custromText || 'Unknown error';
 }
