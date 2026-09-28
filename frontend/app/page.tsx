@@ -14,7 +14,7 @@ import { SpellList } from './components/SpellList';
 import { CastStatus } from './components/CastStatus';
 import { RitualControls } from './components/RitualControls';
 import { SpellStatus } from '../../backend/src/generated/prisma/enums';
-import { loadConfigs } from '@/lib/repository/configs/configs';
+import { clearCount, loadConfigs } from '@/lib/repository/configs/configs';
 import {
     castSpells,
     clearSpells,
@@ -55,7 +55,6 @@ export default function Home() {
     const [savedSpells, setSavedSpells] = useState<SavedSpellItem[]>([]);
 
     const [isCasting, setIsCasting] = useState<boolean>(false);
-    const [castCount, setCastCount] = useState<number>(0);
     const spellsRef = useRef(spells); // Пока не используется
     const timerIdRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -82,7 +81,6 @@ export default function Home() {
 
             if (configs) {
                 setConfigs(configs);
-                setCastCount(configs.iterationsCompleted);
             }
         });
     }
@@ -108,8 +106,6 @@ export default function Home() {
             optmDeleteSpell([id]);
             const result = await deleteSpell(id);
 
-            console.log(result);
-
             if (result.success) {
                 setSpells((prev) => prev.filter((i) => i.id !== id));
             }
@@ -119,11 +115,15 @@ export default function Home() {
     async function clearAll() {
         startTransition(async () => {
             optmDeleteSpell(spells.map((s) => s.id));
-            const result = await clearSpells();
+
+            const [result, configs] = await Promise.all([clearSpells(), clearCount()]);
 
             if (result.success) {
                 setSpells([]);
-                setCastCount(0);
+            }
+
+            if (configs) {
+                setConfigs(configs);
             }
         });
     }
@@ -152,7 +152,7 @@ export default function Home() {
             }
 
             console.log('✨ Casting ritual:', config.iterationsCompleted);
-            setCastCount(config.iterationsCompleted);
+            // set count here
         }, 2000);
     }
 
@@ -181,9 +181,6 @@ export default function Home() {
                 setSpells(spells || []);
                 setSavedSpells(savedSpells);
                 setIsCasting(configs?.status === 'RUNNING');
-                setCastCount(configs?.iterationsCompleted || 0);
-
-                console.log(spells, savedSpells);
             }
         );
     }, []);
@@ -224,7 +221,7 @@ export default function Home() {
 
                     <CastStatus
                         isCasting={isCasting}
-                        castCount={castCount}
+                        castCount={configs.iterationsCompleted}
                         duration={SPEED}
                     />
                 </div>

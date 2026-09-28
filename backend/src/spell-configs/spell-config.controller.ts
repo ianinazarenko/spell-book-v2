@@ -16,4 +16,9 @@ export class SpellConfigController {
     updateConfig(@Body() dto: CreateConfigDto): Promise<SpellConfig> {
         return this.configService.saveConfing(dto);
     }
+
+    @Post('/clear-count')
+    clearCount(): Promise<SpellConfig> {
+        return this.configService.clearCount();
+    }
 }

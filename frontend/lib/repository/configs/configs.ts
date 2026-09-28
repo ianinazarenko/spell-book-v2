@@ -34,3 +34,14 @@ export async function updateConfigs(body: {
         showError(e, 'updateConfigs');
     }
 }
+
+export async function clearCount(): Promise<SpellConfig | undefined> {
+    try {
+        return fetchData<SpellConfig>({
+            method: 'POST',
+            route: `${BASE_URL}/clear-count`,
+        });
+    } catch (e) {
+        showError(e, 'clearCount');
+    }
+}

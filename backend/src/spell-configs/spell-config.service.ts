@@ -27,4 +27,11 @@ export class SpellConfigService {
             update: { iterationsTotal, durationMin: dto.durationMin, iterationsCompleted: 0 },
         });
     }
+
+    async clearCount(): Promise<SpellConfig> {
+        return this.prisma.spellConfig.update({
+            where: { id: CONFIG_ID },
+            data: { iterationsCompleted: 0 },
+        });
+    }
 }
