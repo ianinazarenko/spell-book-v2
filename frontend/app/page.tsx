@@ -57,7 +57,6 @@ export default function Home() {
 
     // Значения для отображения
     const areSpellsSame = compareSpells(); // Пока не используется
-    const spellsStr = JSON.stringify(spells);
 
     function compareSpells() {
         // return JSON.stringify(spells) === JSON.stringify(storedSpells);
@@ -215,7 +214,7 @@ export default function Home() {
                     hasSpells={spells.length > 0}
                     canRestore={false}
                     areSpellsSame={false}
-                    spells={spellsStr}
+                    spells={spells}
                 />
             </main>
         </div>

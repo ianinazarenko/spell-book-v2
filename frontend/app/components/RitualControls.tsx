@@ -5,6 +5,7 @@ import { useIsHydrated } from '@/lib/hooks/useIsHydrated';
 
 import buttonStyles from '@/app/components/ControlButton.module.css';
 import styles from '@/app/components/RitualControls.module.css';
+import { SpellItem } from '@shared/spells/spells.types';
 
 interface RitualControlsProps {
     onCast: () => void;
@@ -16,7 +17,7 @@ interface RitualControlsProps {
     hasSpells: boolean;
     canRestore: boolean;
     areSpellsSame: boolean;
-    spells: string;
+    spells: SpellItem[];
 }
 
 export function RitualControls({
@@ -39,8 +40,16 @@ export function RitualControls({
     const isRestoreDisabled = isCasting || !canRestore;
     const isCopyDisabled = !hasSpells;
 
+    const spellsTextArr: string[] = spells.map((s) => s.spellText);
+    const spellsStr: string = JSON.stringify(spellsTextArr);
+
     if (!isHydrated) {
-        return <div className={`${styles.ctas} ${styles.ctasPlaceholder}`} aria-hidden="true" />;
+        return (
+            <div
+                className={`${styles.ctas} ${styles.ctasPlaceholder}`}
+                aria-hidden='true'
+            />
+        );
     }
 
     return (
@@ -85,7 +94,10 @@ export function RitualControls({
                 Restore
             </button>
 
-            <CopyButton text={spells} disabled={isCopyDisabled} />
+            <CopyButton
+                text={spellsStr}
+                disabled={isCopyDisabled}
+            />
         </div>
     );
 }
