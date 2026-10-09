@@ -5,6 +5,5 @@ import { SpellConfigController } from './spell-config.controller.js';
 @Module({
     providers: [SpellConfigService],
     controllers: [SpellConfigController],
-    exports: [SpellConfigService],
 })
 export class SpellConfigModule {}
