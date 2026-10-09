@@ -1,6 +1,6 @@
 import { Controller, HttpCode, HttpStatus, Get, Post } from '@nestjs/common';
 import { CastSpellsService } from './cast-spells.service.js';
-import { SpellConfig } from '../generated/prisma/client.js';
+import { SpellConfig } from '../../generated/prisma/client.js';
 
 @Controller('spells')
 export class CastSpellController {

@@ -4,9 +4,9 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { BaseAnswer, SavedSpellItem } from '../shared/spells/spells.types.js';
-import { SpellJob } from '../generated/prisma/client.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { BaseAnswer, SavedSpellItem } from '../../shared/spells/spells.types.js';
+import { SpellJob } from '../../generated/prisma/client.js';
 
 @Injectable()
 export class SaveSpellsService {

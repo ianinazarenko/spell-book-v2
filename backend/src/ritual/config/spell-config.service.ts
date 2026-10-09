@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { SpellConfig } from '../generated/prisma/client.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { SpellConfig } from '../../generated/prisma/client.js';
 import { CreateConfigDto } from './create-config.dto.js';
-import { DEFAULT_COUNT, CONFIG_ID } from '../shared/config/constants.js';
-import { StatusAnswer } from '../shared/spells/spells.types.js';
+import { DEFAULT_COUNT, CONFIG_ID } from '../../shared/config/constants.js';
+import { StatusAnswer } from '../../shared/spells/spells.types.js';
 
 @Injectable()
 export class SpellConfigService {
