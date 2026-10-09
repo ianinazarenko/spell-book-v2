@@ -9,3 +9,8 @@ export interface BaseAnswer {
     message: string;
     success: boolean;
 }
+
+export interface StatusAnswer {
+    count: number;
+    status: SpellStatus;
+}

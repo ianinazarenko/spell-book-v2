@@ -1,4 +1,4 @@
-import { SpellConfig } from '@shared/spells/spells.types';
+import { SpellConfig, StatusAnswer } from '@shared/spells/spells.types';
 import { fetchData } from '..';
 import { showError } from '../utils';
 
@@ -46,16 +46,19 @@ export async function clearCount(): Promise<SpellConfig | undefined> {
     }
 }
 
-export async function getCount(): Promise<number> {
+export async function getCount(): Promise<StatusAnswer> {
     try {
-        const count = await fetchData<number>({
+        const data = await fetchData<StatusAnswer>({
             method: 'GET',
             route: `${BASE_URL}/count`,
         });
 
-        return count ?? 0;
+        return data;
     } catch (e) {
         showError(e, 'getCount');
-        return 0;
+        return {
+            count: 0,
+            status: 'FAILED',
+        };
     }
 }

@@ -131,6 +131,14 @@ export default function Home() {
     async function castSpell() {
         if (isCasting || !spells.length) return;
 
+        if (
+            configs.status === 'COMPLETED' ||
+            configs.iterationsCompleted >= configs.iterationsTotal
+        ) {
+            setConfigs((prev) => ({ ...prev, iterationsCompleted: 0 }));
+            setIsCasting(true);
+        }
+
         const { status } = await castSpells();
 
         if (status === 'RUNNING') {
@@ -151,17 +159,13 @@ export default function Home() {
     // Периодическое чтение прогресса
     function startPolling() {
         timerIdRef.current = setInterval(async () => {
-            const config = await loadConfigs();
+            const { count, status } = await getCount();
 
-            if (!config || config.status !== 'RUNNING') {
-                setIsCasting(false);
-                return;
-            }
-
-            const count = await getCount();
             console.log('✨ Casting ritual:', count);
-            setConfigs((prev) => ({ ...prev, iterationsCompleted: count }));
-            // set count here
+            setConfigs((prev) => ({ ...prev, iterationsCompleted: count, status }));
+            if (count >= configs.iterationsTotal || status !== 'RUNNING') {
+                setIsCasting(false);
+            }
         }, 2000);
     }
 
@@ -231,6 +235,7 @@ export default function Home() {
                     <CastStatus
                         isCasting={isCasting}
                         castCount={configs.iterationsCompleted}
+                        castTotal={configs.iterationsTotal}
                         duration={SPEED}
                     />
                 </div>
