@@ -4,7 +4,7 @@ import * as fs from 'node:fs';
 
 type LogLevel = 'INFO' | 'WARN' | 'ERROR';
 
-export class FileLogger extends ConsoleLogger implements OnModuleInit {
+export class FileLogger extends ConsoleLogger {
     private readonly logsDir = path.join(process.cwd(), 'logs');
 
     constructor(context: string) {
@@ -13,9 +13,7 @@ export class FileLogger extends ConsoleLogger implements OnModuleInit {
         if (!fs.existsSync(this.logsDir)) {
             fs.mkdirSync(this.logsDir, { recursive: true });
         }
-    }
 
-    onModuleInit(): void {
         this.cleanOldLogs();
     }
 

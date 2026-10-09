@@ -2,10 +2,10 @@
 
 // Types
 import { SavedSpellItem, type SpellItem } from '@shared/spells/spells.types';
+import { SpellConfig } from '@shared/spells/spells.types';
 
 import styles from './page.module.css';
 import { useEffect, useState, useRef, useOptimistic, useTransition } from 'react';
-import { useLocalStorage } from '@/lib/hooks/useStorage';
 
 // Компоненты
 import { HeaderLogo } from './components/HeaderLogo';
@@ -25,9 +25,9 @@ import {
     saveSpells,
     stopCasting,
 } from '@/lib/repository/spells/spells';
-import { SpellConfig } from '../../backend/src/generated/prisma/client';
-import { DEFAULT_CONFIGS } from './constants/configs';
 import { updateConfigs } from '@/lib/repository/configs/configs';
+import { DEFAULT_CONFIGS } from './constants/configs';
+import ErrorStatus from '@/app/components/ErrorStatus';
 
 export default function Home() {
     const SPEED = 2000;
@@ -238,6 +238,8 @@ export default function Home() {
                         castTotal={configs.iterationsTotal}
                         duration={SPEED}
                     />
+
+                    <ErrorStatus configs={configs} />
                 </div>
 
                 <RitualControls

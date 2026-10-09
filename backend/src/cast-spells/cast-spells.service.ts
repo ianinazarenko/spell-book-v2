@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { SpellStatus } from '../generated/prisma/enums.js';
 import { CONFIG_ID } from '../shared/config/constants.js';
@@ -14,10 +14,14 @@ interface AnswerStatus {
 }
 
 @Injectable()
-export class CastSpellsService {
+export class CastSpellsService implements OnModuleInit {
     private readonly logger = new FileLogger(CastSpellsService.name);
 
     constructor(private readonly prisma: PrismaService) {}
+
+    async onModuleInit(): Promise<void> {
+        await this.recoverStaleJobs();
+    }
 
     async castAllSpellsJob(): Promise<SpellConfig> {
         const spells = await this.prisma.spellJob.findMany({
@@ -126,5 +130,21 @@ export class CastSpellsService {
 
     private prepareSpellsString(spells: SpellItem[]): string {
         return spells.map((s, i) => `${i + 1}) ${s.spellText}`).join('\n') + '\n// --- // --- //';
+    }
+
+    private async recoverStaleJobs(): Promise<void> {
+        const { count } = await this.prisma.spellConfig.updateMany({
+            where: {
+                id: CONFIG_ID,
+                status: 'RUNNING',
+            },
+            data: {
+                status: 'FAILED',
+            },
+        });
+
+        if (count > 0) {
+            this.logger.error(`⚠️ Обнаружена зависшая задача. Статус сброшен на FAILED.`);
+        }
     }
 }
