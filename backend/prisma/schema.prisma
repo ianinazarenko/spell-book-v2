@@ -37,7 +37,9 @@ model SpellConfig {
   iterationsTotal     Int         @default(1770) @map("iterations_total")
   iterationsCompleted Int         @default(0) @map("iterations_completed")
   status              SpellStatus @default(QUEUED)
-  runId               String?     @default(uuid()) @map("run_id") @db.Uuid
+  runId               String      @default(uuid()) @map("run_id") @db.Uuid
+  updatedAt           DateTime?   @updatedAt @map("updated_at")
+  errorMessage        String?     @map("error_message") @db.Text
 
   @@map("spell_configs")
 }
