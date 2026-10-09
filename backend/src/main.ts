@@ -6,6 +6,7 @@ const CLIENT_URL = 'http://localhost:8080';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+    app.enableShutdownHooks();
 
     // Global DTO validation
     app.useGlobalPipes(
