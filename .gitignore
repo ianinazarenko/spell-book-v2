@@ -76,3 +76,5 @@ AGENTS.md
 generated/
 generated/prisma
 prisma/migrations/migration_lock.toml
+
+logs/

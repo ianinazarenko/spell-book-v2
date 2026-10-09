@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { SpellStatus } from '../generated/prisma/enums.js';
 import { CONFIG_ID } from '../shared/config/constants.js';
 import { Prisma, SpellConfig } from '../generated/prisma/client.js';
 import { randomUUID } from 'node:crypto';
+import { FileLogger } from '../file-logger/file-logger.js';
+import { SpellItem } from '../shared/spells/spells.types.js';
 
 interface AnswerStatus {
     message: string;
@@ -13,6 +15,8 @@ interface AnswerStatus {
 
 @Injectable()
 export class CastSpellsService {
+    private readonly logger = new FileLogger(CastSpellsService.name);
+
     constructor(private readonly prisma: PrismaService) {}
 
     async castAllSpellsJob(): Promise<SpellConfig> {
@@ -26,6 +30,8 @@ export class CastSpellsService {
             throw new Error('There is no spells to cast');
         }
 
+        const spellsString = this.prepareSpellsString(spells);
+
         const isNewRitual =
             config.status === 'COMPLETED' || config.iterationsCompleted >= config.iterationsTotal;
 
@@ -37,11 +43,12 @@ export class CastSpellsService {
 
         // 3. Запускаем АСИНХРОННЫЙ фоновый процесс без await!
         // Важно: мы НЕ делаем await для runBackgroundLoop, чтобы HTTP-запрос не ждал завершения!
-        this.runBackgroundLoop(
+        this.runBackgroundLoop({
             runId,
-            config.iterationsTotal,
-            isNewRitual ? 0 : config.iterationsCompleted
-        );
+            totalIterations: config.iterationsTotal,
+            completed: isNewRitual ? 0 : config.iterationsCompleted,
+            spellsString,
+        });
 
         return newConfig;
     }
@@ -55,11 +62,17 @@ export class CastSpellsService {
         return newConfig;
     }
 
-    private async runBackgroundLoop(
-        runId: string,
-        totalIterations: number,
-        completed: number
-    ): Promise<void> {
+    private async runBackgroundLoop({
+        runId,
+        totalIterations,
+        completed,
+        spellsString,
+    }: {
+        runId: string;
+        totalIterations: number;
+        completed: number;
+        spellsString: string;
+    }): Promise<void> {
         const INTERVAL_MS = 2000;
 
         try {
@@ -71,7 +84,7 @@ export class CastSpellsService {
                 // if (i === 3) throw new Error('Magic overflow: spell casting failed!');
 
                 // Чтобы не словить Race Condition (когда два запроса параллельно перезаписывают счетчик), в SQL / Prisma принято обновлять счетчик не через переприсваивание (completed = completed + 1 в JS), а средствами самого SQL:
-                await this.prisma.spellConfig.update({
+                const newConfig = await this.prisma.spellConfig.update({
                     where: {
                         id: CONFIG_ID,
                         status: 'RUNNING',
@@ -81,6 +94,10 @@ export class CastSpellsService {
                         iterationsCompleted: { increment: 1 },
                     },
                 });
+
+                this.logger.log(
+                    `\n✨🔮 Casting ritual: ${newConfig.iterationsCompleted}/${newConfig.iterationsTotal}\n${spellsString}`
+                );
             }
 
             await this.prisma.spellConfig.update({
@@ -98,6 +115,16 @@ export class CastSpellsService {
                     status: 'FAILED',
                 },
             });
+
+            this.logger.error(
+                `❌ Failed to cast spells ritual for run ${runId}: ${e instanceof Error ? e.message : String(e)}`,
+                e instanceof Error ? e.stack : undefined,
+                CastSpellsService.name
+            );
         }
+    }
+
+    private prepareSpellsString(spells: SpellItem[]): string {
+        return spells.map((s, i) => `${i + 1}) ${s.spellText}`).join('\n') + '\n// --- // --- //';
     }
 }
