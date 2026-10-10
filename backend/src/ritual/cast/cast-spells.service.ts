@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { SpellStatus } from '../../generated/prisma/enums.js';
 import { CONFIG_ID } from '../../shared/config/constants.js';
@@ -15,7 +15,7 @@ interface AnswerStatus {
 }
 
 @Injectable()
-export class CastSpellsService implements OnModuleInit {
+export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new FileLogger(CastSpellsService.name);
     private readonly ritualProgress$ = new Subject<SpellConfig>();
 
@@ -23,6 +23,10 @@ export class CastSpellsService implements OnModuleInit {
 
     async onModuleInit(): Promise<void> {
         await this.recoverStaleJobs();
+    }
+
+    onModuleDestroy(): void {
+        this.ritualProgress$.complete();
     }
 
     getProgressStream(): Observable<SpellConfig> {
@@ -53,7 +57,7 @@ export class CastSpellsService implements OnModuleInit {
 
         // 3. Запускаем АСИНХРОННЫЙ фоновый процесс без await!
         // Важно: мы НЕ делаем await для runBackgroundLoop, чтобы HTTP-запрос не ждал завершения!
-        this.runBackgroundLoop({
+        void this.runBackgroundLoop({
             runId,
             totalIterations: config.iterationsTotal,
             completed: isNewRitual ? 0 : config.iterationsCompleted,
@@ -137,6 +141,7 @@ export class CastSpellsService implements OnModuleInit {
     }
 
     private async recoverStaleJobs(): Promise<void> {
+        const errorMessage = `⚠️ Обнаружена зависшая задача. Статус сброшен на FAILED.`;
         const { count } = await this.prisma.spellConfig.updateMany({
             where: {
                 id: CONFIG_ID,
@@ -144,11 +149,12 @@ export class CastSpellsService implements OnModuleInit {
             },
             data: {
                 status: 'FAILED',
+                errorMessage,
             },
         });
 
         if (count > 0) {
-            this.logger.error(`⚠️ Обнаружена зависшая задача. Статус сброшен на FAILED.`);
+            this.logger.error(errorMessage);
         }
     }
 }

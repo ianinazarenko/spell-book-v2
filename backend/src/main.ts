@@ -5,7 +5,9 @@ import { ValidationPipe } from '@nestjs/common';
 const CLIENT_URL = 'http://localhost:8080';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+        forceCloseConnections: true,
+    });
     app.enableShutdownHooks();
 
     // Global DTO validation
