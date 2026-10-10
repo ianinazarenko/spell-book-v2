@@ -24,6 +24,7 @@ export class CastSpellController {
         return this.castSpellsService.getProgressStream().pipe(
             map((config) => ({
                 data: config,
+                retry: 5000,
             }))
         );
     }
