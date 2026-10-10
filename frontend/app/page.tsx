@@ -28,6 +28,7 @@ import {
 import { updateConfigs } from '@/lib/repository/configs/configs';
 import { DEFAULT_CONFIGS } from './constants/configs';
 import ErrorStatus from '@/app/components/ErrorStatus';
+import { useSpellConfig } from '@/lib/hooks/useSpellConfig';
 
 export default function Home() {
     const SPEED = 2000;
@@ -35,7 +36,10 @@ export default function Home() {
     // Состояние страницы
     const [isPending, startTransition] = useTransition();
 
-    const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
+    const [isCasting, setIsCasting] = useState<boolean>(false);
+
+    // --- Configs
+    const { configs, setConfigs, sseError, isConnected } = useSpellConfig(setIsCasting);
     const [optmConfigs, setOptmConfigs] = useOptimistic(
         configs,
         (currentConfigs: SpellConfig, newConfigs: Partial<SpellConfig>) => ({
@@ -44,6 +48,7 @@ export default function Home() {
         })
     );
 
+    // --- Spells
     const [spells, setSpells] = useState<SpellItem[]>([]);
     const [optmSpells, optmDeleteSpell] = useOptimistic(
         spells,
@@ -53,13 +58,13 @@ export default function Home() {
 
     const [savedSpells, setSavedSpells] = useState<SavedSpellItem[]>([]);
 
-    const [isCasting, setIsCasting] = useState<boolean>(false);
     const spellsRef = useRef(spells); // Пока не используется
     const timerIdRef = useRef<NodeJS.Timeout | null>(null);
 
     // Значения для отображения
     const areSpellsSame = compareSpells();
     const canRestore = savedSpells.length > 0 && !areSpellsSame;
+    const isCompleted = configs.status === 'COMPLETED';
 
     function compareSpells() {
         const spellsIds = spells.map((s) => s.id);
@@ -153,25 +158,6 @@ export default function Home() {
         }
     }
 
-    // Периодическое чтение прогресса
-    function startPolling() {
-        timerIdRef.current = setInterval(async () => {
-            const { count, status } = await getCount();
-
-            console.log('✨ Casting ritual:', count);
-            setConfigs((prev) => ({ ...prev, iterationsCompleted: count, status }));
-            if (count >= configs.iterationsTotal || status !== 'RUNNING') {
-                setIsCasting(false);
-            }
-        }, 2000);
-    }
-
-    function stopPolling() {
-        if (!timerIdRef.current) return;
-        clearInterval(timerIdRef.current);
-        timerIdRef.current = null;
-    }
-
     //Сохранение и восстановление из отдельной таблицы
     async function handleSave() {
         const savedSpells = await saveSpells();
@@ -185,31 +171,18 @@ export default function Home() {
 
     // При открытии страницы загружаем данные с бэка
     useEffect(() => {
-        Promise.all([loadConfigs(), loadSpells(), loadSavedSpells()]).then(
-            ([configs, spells, savedSpells]) => {
-                setConfigs(configs || DEFAULT_CONFIGS);
-                setSpells(spells || []);
-                setSavedSpells(savedSpells);
-                setIsCasting(configs?.status === 'RUNNING');
-            }
-        );
+        Promise.all([loadSpells(), loadSavedSpells()]).then(([spells, savedSpells]) => {
+            setSpells(spells || []);
+            setSavedSpells(savedSpells);
+        });
     }, []);
 
-    // При изменении isCasting запускаем или останавливаем опрос
-    useEffect(() => {
-        if (isCasting) {
-            startPolling();
-        } else {
-            stopPolling();
-        }
-    }, [isCasting]);
-
     // Пустой список выключает локальное отображение ритуала
-    useEffect(() => {
-        if (spells.length < 1 && isCasting) {
-            setIsCasting(false);
-        }
-    }, [spells]);
+    // useEffect(() => {
+    //     if (spells.length < 1 && isCasting) {
+    //         setIsCasting(false);
+    //     }
+    // }, [spells]);
 
     return (
         <div className={styles.page}>
@@ -217,6 +190,8 @@ export default function Home() {
                 <HeaderLogo />
 
                 <div>
+                    <div>{isCompleted ? 'Completed' : null}</div>
+
                     <ActionRow
                         initialDur={configs.durationMin}
                         onAdd={handleSubmit}
@@ -236,7 +211,10 @@ export default function Home() {
                         duration={SPEED}
                     />
 
-                    <ErrorStatus configs={configs} />
+                    <ErrorStatus
+                        configs={configs}
+                        sseError={sseError}
+                    />
                 </div>
 
                 <RitualControls
