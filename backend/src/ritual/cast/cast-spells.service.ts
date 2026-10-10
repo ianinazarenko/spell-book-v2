@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { SpellStatus } from '../../generated/prisma/enums.js';
 import { CONFIG_ID } from '../../shared/config/constants.js';
@@ -6,6 +6,7 @@ import { Prisma, SpellConfig } from '../../generated/prisma/client.js';
 import { randomUUID } from 'node:crypto';
 import { FileLogger } from '../../file-logger/file-logger.js';
 import { SpellItem } from '../../shared/spells/spells.types.js';
+import { Observable, Subject } from 'rxjs';
 
 interface AnswerStatus {
     message: string;
@@ -16,11 +17,16 @@ interface AnswerStatus {
 @Injectable()
 export class CastSpellsService implements OnModuleInit {
     private readonly logger = new FileLogger(CastSpellsService.name);
+    private readonly ritualProgress$ = new Subject<SpellConfig>();
 
     constructor(private readonly prisma: PrismaService) {}
 
     async onModuleInit(): Promise<void> {
         await this.recoverStaleJobs();
+    }
+
+    getProgressStream(): Observable<SpellConfig> {
+        return this.ritualProgress$.asObservable();
     }
 
     async castAllSpellsJob(): Promise<SpellConfig> {
@@ -96,25 +102,23 @@ export class CastSpellsService implements OnModuleInit {
                     },
                     data: {
                         iterationsCompleted: { increment: 1 },
+                        status: i + 1 === count ? 'COMPLETED' : 'RUNNING',
                     },
                 });
+
+                this.ritualProgress$.next(newConfig);
 
                 this.logger.log(
                     `\n✨🔮 Casting ritual: ${newConfig.iterationsCompleted}/${newConfig.iterationsTotal}\n${spellsString}`
                 );
             }
-
-            await this.prisma.spellConfig.update({
-                where: { id: CONFIG_ID },
-                data: { status: 'COMPLETED' },
-            });
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
                 return;
             }
 
             await this.prisma.spellConfig.update({
-                where: { id: CONFIG_ID },
+                where: { id: CONFIG_ID, runId, status: 'RUNNING' },
                 data: {
                     status: 'FAILED',
                 },
@@ -129,7 +133,7 @@ export class CastSpellsService implements OnModuleInit {
     }
 
     private prepareSpellsString(spells: SpellItem[]): string {
-        return spells.map((s, i) => `${i + 1}) ${s.spellText}`).join('\n') + '\n// --- // --- //';
+        return spells.map((s, i) => `${i + 1}) ${s.spellText}`).join('\n') + '\n --- ';
     }
 
     private async recoverStaleJobs(): Promise<void> {

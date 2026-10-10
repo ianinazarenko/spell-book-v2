@@ -1,6 +1,7 @@
-import { Controller, HttpCode, HttpStatus, Get, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Sse, MessageEvent } from '@nestjs/common';
 import { CastSpellsService } from './cast-spells.service.js';
 import { SpellConfig } from '../../generated/prisma/client.js';
+import { Observable, map } from 'rxjs';
 
 @Controller('spells')
 export class CastSpellController {
@@ -16,5 +17,14 @@ export class CastSpellController {
     @HttpCode(HttpStatus.OK)
     stopAllSpellsJob(): Promise<SpellConfig> {
         return this.castSpellsService.stopAllSpellsJob();
+    }
+
+    @Sse('/progress')
+    streamRitualProgress(): Observable<MessageEvent> {
+        return this.castSpellsService.getProgressStream().pipe(
+            map((config) => ({
+                data: config,
+            }))
+        );
     }
 }
