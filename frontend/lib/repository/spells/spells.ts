@@ -62,7 +62,7 @@ export async function clearSpells(): Promise<BaseAnswer> {
     }
 }
 
-export async function castSpells(): Promise<{ status: SpellStatus }> {
+export async function castSpells(): Promise<{ status: SpellStatus; errorMessage?: string }> {
     try {
         const newConfig = await fetchData<SpellConfig>({
             method: 'POST',
@@ -72,7 +72,7 @@ export async function castSpells(): Promise<{ status: SpellStatus }> {
         return { status: newConfig.status };
     } catch (e) {
         showError(e, 'castSpell');
-        return { status: 'FAILED' };
+        return { status: 'FAILED', errorMessage: getErrorMessage(e) };
     }
 }
 

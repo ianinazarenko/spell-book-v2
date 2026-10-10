@@ -139,13 +139,10 @@ export default function Home() {
             setIsCasting(true);
         }
 
-        const { status } = await castSpells();
+        const data = await castSpells();
 
-        if (status === 'RUNNING') {
-            setIsCasting(true);
-        } else {
-            setIsCasting(false);
-        }
+        setConfigs((prev) => ({ ...prev, ...data }));
+        setIsCasting(data.status === 'RUNNING');
     }
 
     async function stopSpell() {
