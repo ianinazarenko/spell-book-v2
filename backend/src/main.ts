@@ -23,7 +23,7 @@ async function bootstrap() {
         origin: CLIENT_URL,
     });
 
-    await app.listen(process.env.PORT ?? 8000);
+    await app.listen(process.env.PORT ?? 8000, '127.0.0.1');
 }
 
 await bootstrap();
