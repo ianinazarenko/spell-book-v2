@@ -1,4 +1,4 @@
-import { SpellJob, SpellConfig } from '../../generated/prisma/client.js';
+import { SpellJob, SpellConfig, PushSubscription } from '../../generated/prisma/client.js';
 
 export type { SpellConfig };
 export type SpellItem = SpellJob;
@@ -14,3 +14,5 @@ export interface StatusAnswer {
     count: number;
     status: SpellStatus;
 }
+
+export type Subscription = PushSubscription;

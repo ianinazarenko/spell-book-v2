@@ -34,7 +34,7 @@ model SavedSpell {
 model SpellConfig {
   id                  String      @id @default("spell-configs")
   durationMin         Int?        @map("duration_min")
-  iterationsTotal     Int         @default(1770) @map("iterations_total")
+  iterationsTotal     Int         @default(1800) @map("iterations_total")
   iterationsCompleted Int         @default(0) @map("iterations_completed")
   status              SpellStatus @default(QUEUED)
   runId               String?     @default(uuid()) @map("run_id") @db.Uuid
@@ -42,4 +42,12 @@ model SpellConfig {
   errorMessage        String?     @map("error_message") @db.Text
 
   @@map("spell_configs")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
 }
