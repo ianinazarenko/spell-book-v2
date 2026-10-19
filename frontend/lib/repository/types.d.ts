@@ -1,7 +1,7 @@
 export type QueryParams = Record<string, string> | null;
-export type BodyObj = Record<string, string | number | boolean | null> | null;
+export type BodyObj = object | null;
 
-export interface FetchParams {
+export interface FetchParams<T = BodyObj> {
     route?: string;
     method?: 'GET' | 'POST' | 'DELETE';
     query?: QueryParams;

@@ -26,9 +26,9 @@ import {
     stopCasting,
 } from '@/lib/repository/spells/spells';
 import { updateConfigs } from '@/lib/repository/configs/configs';
-import { DEFAULT_CONFIGS } from './constants/configs';
 import ErrorStatus from '@/app/components/ErrorStatus';
 import { useSpellConfig } from '@/lib/hooks/useSpellConfig';
+import NotificationsToggle from '@/app/components/NotificationsToggle';
 
 export default function Home() {
     const SPEED = 2000;
@@ -58,8 +58,8 @@ export default function Home() {
 
     const [savedSpells, setSavedSpells] = useState<SavedSpellItem[]>([]);
 
-    const spellsRef = useRef(spells); // Пока не используется
-    const timerIdRef = useRef<NodeJS.Timeout | null>(null);
+    // const spellsRef = useRef(spells); // Пока не используется
+    // const timerIdRef = useRef<NodeJS.Timeout | null>(null);
 
     // Значения для отображения
     const areSpellsSame = compareSpells();
@@ -191,6 +191,8 @@ export default function Home() {
 
                 <div>
                     <div>{isCompleted ? 'Completed' : null}</div>
+
+                    <NotificationsToggle />
 
                     <ActionRow
                         initialDur={configs.durationMin}
