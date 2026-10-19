@@ -14,9 +14,8 @@ export class NotificationsController {
     }
 
     @Delete('/unsubscribe')
-    @HttpCode(HttpStatus.OK)
-    // TODO: почему через Body & что делает конструкция @Body('endpoint') endpoint: string?
-    async unsubscribe(@Body('endpoint') endpoint: string): Promise<void> {
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async unsubscribe(@Body('endpoint') endpoint: PushSubscription['endpoint']): Promise<void> {
         return this.notificationsService.unsubscribe(endpoint);
     }
 }

@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SubscriptionDto } from './subscription.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import * as webPush from 'web-push';
+import webPush from 'web-push';
 import { Subscription } from '../shared/spells/spells.types.js';
+import { Prisma } from '../generated/prisma/client.js';
 
 @Injectable()
 export class NotificationsService {
@@ -39,7 +40,11 @@ export class NotificationsService {
         try {
             await this.prisma.pushSubscription.delete({ where: { endpoint } });
         } catch (e) {
-            // ignore
+            if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
+                return;
+            }
+
+            throw e;
         }
     }
 }

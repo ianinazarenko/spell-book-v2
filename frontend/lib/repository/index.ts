@@ -18,6 +18,11 @@ export async function fetchData<T>({
             headers: body ? { 'Content-Type': 'application/json' } : undefined,
         });
 
+        // if no content we cannot parse the body with .json()
+        if (res.status === 204) {
+            return undefined as T;
+        }
+
         const data = (await res.json()) as T;
 
         if (!res.ok) {
