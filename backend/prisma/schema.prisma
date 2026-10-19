@@ -50,4 +50,6 @@ model PushSubscription {
   p256dh    String
   auth      String
   createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("push_subscriptions")
 }
