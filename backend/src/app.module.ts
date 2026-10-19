@@ -7,9 +7,17 @@ import { SpellsModule } from './spells/spells.module.js';
 import { CastSpellsModule } from './ritual/cast/cast-spells.module.js';
 import { SpellConfigModule } from './ritual/config/spell-config.module.js';
 import { SaveSpellsModule } from './spells/saved/save-spells.module.js';
+import { NotificationsModule } from './notifications/notifications.module.js';
 
 @Module({
-    imports: [PrismaModule, SpellsModule, SpellConfigModule, CastSpellsModule, SaveSpellsModule],
+    imports: [
+        PrismaModule,
+        SpellsModule,
+        SpellConfigModule,
+        CastSpellsModule,
+        SaveSpellsModule,
+        NotificationsModule,
+    ],
     controllers: [AppController],
     providers: [AppService],
 })
