@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 class PushKeysDto {
     @IsString()
@@ -18,4 +18,8 @@ export class SubscriptionDto {
     @IsObject()
     @IsNotEmpty()
     keys: PushKeysDto;
+
+    @IsDate()
+    @IsOptional()
+    expirationTime: string;
 }
