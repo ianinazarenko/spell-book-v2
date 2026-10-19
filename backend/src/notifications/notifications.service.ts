@@ -47,4 +47,34 @@ export class NotificationsService {
             throw e;
         }
     }
+
+    async sendPushToAll(title: string, body: string, url: string = '/'): Promise<void> {
+        const subscriptions = await this.prisma.pushSubscription.findMany();
+        const payload = JSON.stringify({ title, body, url });
+
+        const sendPromises = subscriptions.map(async (sub) => {
+            const pushSub = {
+                endpoint: sub.endpoint,
+                keys: {
+                    p256dh: sub.p256dh,
+                    auth: sub.auth,
+                },
+            };
+
+            try {
+                await webPush.sendNotification(pushSub, payload);
+            } catch (err: any) {
+                // 410 Gone или 404 Not Found означает, что пользователь отозвал разрешение
+                // или подписка просрочена. В этом случае удаляем «тухлую» подписку из БД!
+                if (err.statusCode === 410 || err.statusCode === 404) {
+                    this.logger.warn(`Удаляем устаревшую подписку: ${sub.endpoint}`);
+                    await this.unsubscribe(sub.endpoint);
+                } else {
+                    this.logger.error(`Ошибка отправки пуша на ${sub.endpoint}`, err);
+                }
+            }
+        });
+
+        await Promise.all(sendPromises);
+    }
 }

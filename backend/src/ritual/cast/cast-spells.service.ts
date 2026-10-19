@@ -7,6 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { FileLogger } from '../../file-logger/file-logger.js';
 import { SpellItem } from '../../shared/spells/spells.types.js';
 import { Observable, Subject } from 'rxjs';
+import { NotificationsService } from '../../notifications/notifications.service.js';
 
 interface AnswerStatus {
     message: string;
@@ -19,7 +20,10 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new FileLogger(CastSpellsService.name);
     private readonly ritualProgress$ = new Subject<SpellConfig>();
 
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly notificationService: NotificationsService
+    ) {}
 
     async onModuleInit(): Promise<void> {
         await this.recoverStaleJobs();
@@ -115,6 +119,14 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
                 this.logger.log(
                     `\n✨🔮 Casting ritual: ${newConfig.iterationsCompleted}/${newConfig.iterationsTotal}\n${spellsString}`
                 );
+
+                // TODO: check where to place the best
+                if (i + 1 === count) {
+                    await this.notificationService.sendPushToAll(
+                        'Spell Book! 🪄',
+                        'Spell is completed! ✨'
+                    );
+                }
             }
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
@@ -133,6 +145,8 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
                 e instanceof Error ? e.stack : undefined,
                 CastSpellsService.name
             );
+
+            await this.notificationService.sendPushToAll('Spell Book 🧙‍♂️', 'Spell is failed 😓');
         }
     }
 
