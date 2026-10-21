@@ -2,6 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 8px;
     height: 40px;
     padding: 0 16px;
     border-radius: 128px;
@@ -29,7 +30,44 @@
     color: var(--text-primary);
 }
 
+.buttonDanger {
+    background: color-mix(in srgb, var(--error-color) 14%, transparent);
+    color: color-mix(in srgb, var(--error-color) 80%, black);
+}
+
+.roundButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.roundButtonPrimary {
+    background: var(--text-primary);
+    color: var(--background);
+}
+
+.roundButtonSecondary {
+    background: transparent;
+    border-color: var(--button-secondary-border);
+    color: var(--text-primary);
+}
+
 .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.roundButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -43,4 +81,32 @@
         background: var(--button-secondary-hover);
         border-color: transparent;
     }
+
+    .buttonDanger:not(:disabled):hover {
+        background: color-mix(in srgb, var(--error-color) 24%, transparent);
+    }
+
+    .roundButtonPrimary:not(:disabled):hover {
+        background: var(--button-primary-hover);
+    }
+
+    .roundButtonSecondary:not(:disabled):hover {
+        background: var(--button-secondary-hover);
+        border-color: transparent;
+    }
 }
+
+@media (prefers-color-scheme: dark) {
+    .buttonDanger {
+        background: color-mix(in srgb, var(--error-color) 36%, transparent);
+        color: color-mix(in srgb, var(--error-color) 55%, white);
+    }
+}
+
+@media (prefers-color-scheme: dark) and (hover: hover) and (pointer: fine) {
+    .buttonDanger:not(:disabled):hover {
+        background: color-mix(in srgb, var(--error-color) 46%, transparent);
+    }
+}
+
+

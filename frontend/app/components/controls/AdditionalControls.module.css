@@ -1,0 +1,10 @@
+.AdditionalControls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 6px;
+
+    @media (width >= 768px) {
+        display: flex;
+    }
+}

@@ -9,10 +9,11 @@ import { useEffect, useState, useRef, useOptimistic, useTransition } from 'react
 
 // Компоненты
 import { HeaderLogo } from './components/HeaderLogo';
-import { ActionRow } from './components/ActionRow';
+import { DurationConfigs } from './components/DurationConfigs';
+import { NewSpell } from './components/NewSpell';
 import { SpellList } from './components/SpellList';
 import { CastStatus } from './components/CastStatus';
-import { RitualControls } from './components/RitualControls';
+import { RitualControls } from './components/controls/RitualControls';
 import { clearCount, getCount, loadConfigs } from '@/lib/repository/configs/configs';
 import {
     castSpells,
@@ -29,6 +30,7 @@ import { updateConfigs } from '@/lib/repository/configs/configs';
 import ErrorStatus from '@/app/components/ErrorStatus';
 import { useSpellConfig } from '@/lib/hooks/useSpellConfig';
 import NotificationsToggle from '@/app/components/NotificationsToggle';
+import ServiceStatuses from '@/app/components/ServiceStatuses';
 
 export default function Home() {
     const SPEED = 2000;
@@ -37,9 +39,11 @@ export default function Home() {
     const [isPending, startTransition] = useTransition();
 
     const [isCasting, setIsCasting] = useState<boolean>(false);
+    const [isAddingSpell, setIsAddingSpell] = useState(false);
 
     // --- Configs
-    const { configs, setConfigs, sseError, isConnected } = useSpellConfig(setIsCasting);
+    const { configs, setConfigs, sseError, connectionStatus } =
+        useSpellConfig(setIsCasting);
     const [optmConfigs, setOptmConfigs] = useOptimistic(
         configs,
         (currentConfigs: SpellConfig, newConfigs: Partial<SpellConfig>) => ({
@@ -94,14 +98,20 @@ export default function Home() {
             return { success: false };
         }
 
-        const spell = await createSpell({ spell: body.spell });
+        setIsAddingSpell(true);
 
-        if (spell) {
-            setSpells((prev) => [...prev, spell]);
-            return { success: true };
+        try {
+            const spell = await createSpell({ spell: body.spell });
+
+            if (spell) {
+                setSpells((prev) => [...prev, spell]);
+                return { success: true };
+            }
+
+            return { success: false };
+        } finally {
+            setIsAddingSpell(false);
         }
-
-        return { success: false };
     }
 
     // Удаление заклинаний
@@ -190,20 +200,15 @@ export default function Home() {
                 <HeaderLogo />
 
                 <div>
-                    <div>{isCompleted ? 'Completed' : null}</div>
+                    {/*<div>{isCompleted ? 'Completed' : null}</div>*/}
 
-                    <NotificationsToggle />
+                    <ServiceStatuses connectionStatus={connectionStatus} />
 
-                    <ActionRow
+                    <DurationConfigs
                         initialDur={configs.durationMin}
-                        onAdd={handleSubmit}
                         onConfigChange={handleConfigChange}
                         isCasting={isCasting}
-                    />
-
-                    <SpellList
-                        spells={optmSpells}
-                        onRemove={removeSpell}
+                        isAddingSpell={isAddingSpell}
                     />
 
                     <CastStatus
@@ -216,6 +221,13 @@ export default function Home() {
                     <ErrorStatus
                         configs={configs}
                         sseError={sseError}
+                    />
+
+                    <NewSpell onAdd={handleSubmit} />
+
+                    <SpellList
+                        spells={optmSpells}
+                        onRemove={removeSpell}
                     />
                 </div>
 

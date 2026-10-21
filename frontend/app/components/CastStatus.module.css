@@ -4,6 +4,13 @@
     margin-top: 40px;
 }
 
+.row {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .sparkles {
     position: relative;
     height: 80px;

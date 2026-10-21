@@ -1,0 +1,75 @@
+.ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+    margin-top: auto;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--background);
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+
+    @media (width >= 768px) {
+        max-width: 520px;
+    }
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.ctasReady {
+    animation: controlsFadeIn 0.18s ease-out both;
+}
+
+.ctasPlaceholder {
+    min-height: 40px;
+}
+
+@keyframes controlsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .ctas {
+        flex-wrap: wrap;
+    }
+
+    .ctasPlaceholder {
+        min-height: 92px;
+    }
+}
+
+.castButton {
+    flex: 1;
+}
+
+.additionalControls {
+    display: none;
+
+    @media (width >= 768px) {
+        display: block;
+    }
+}
+
+.moreButton {
+    display: inline-block;
+
+    @media (width >= 768px) {
+        display: none;
+    }
+}

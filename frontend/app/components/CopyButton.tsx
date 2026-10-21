@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { RiCheckLine, RiCloseLine, RiFileCopyLine } from '@remixicon/react';
 import buttonStyles from './ControlButton.module.css';
 import styles from './CopyButton.module.css';
 
@@ -28,9 +29,15 @@ export default function CopyButton({ text, disabled = false }: CopyButtonProps) 
               : '';
 
     const statusLabel = {
-        [EStatus.Idle]: 'CP',
-        [EStatus.Error]: '❌',
-        [EStatus.Success]: '✅',
+        [EStatus.Idle]: 'Copy',
+        [EStatus.Error]: 'Failed',
+        [EStatus.Success]: 'Copied',
+    }[status];
+
+    const StatusIcon = {
+        [EStatus.Idle]: RiFileCopyLine,
+        [EStatus.Error]: RiCloseLine,
+        [EStatus.Success]: RiCheckLine,
     }[status];
 
     // --- Handlers ---
@@ -71,8 +78,18 @@ export default function CopyButton({ text, disabled = false }: CopyButtonProps) 
             onClick={handleCopy}
             disabled={disabled}
         >
-            <span key={status} className={styles.status} aria-live="polite" aria-atomic="true">
-                {statusLabel}
+            <span
+                key={status}
+                className={styles.status}
+                aria-live='polite'
+                aria-atomic='true'
+            >
+                <StatusIcon
+                    size={18}
+                    aria-hidden='true'
+                />
+
+                <span className={styles.label}>{statusLabel}</span>
             </span>
         </button>
     );

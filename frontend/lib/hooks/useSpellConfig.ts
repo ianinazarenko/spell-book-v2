@@ -3,15 +3,21 @@ import { useEffect, useRef, useState } from 'react';
 import { loadConfigs } from '@/lib/repository/configs/configs';
 import { DEFAULT_CONFIGS } from '@/app/constants/configs';
 import { connectStream } from '@/lib/repository/sse-stream/sse-stream';
-import { SetStateFunc } from '@/types/types';
+import type { ConnectionStatus, SetStateFunc } from '@/types/types';
 
 export function useSpellConfig(setIsCasting: SetStateFunc<boolean>) {
     const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
+    // sse connection
     const [isConnected, setIsConnected] = useState(false);
     const [sseError, setSseError] = useState<string | null>(null);
 
-    const isInitialized = useRef(false);
-    const isReconnecting = useRef(false);
+    const isAlreadyLoading = useRef(false);
+
+    const connectionStatus: ConnectionStatus = isConnected
+        ? 'connected'
+        : sseError
+          ? 'disconnected'
+          : 'connecting';
 
     useEffect(() => {
         let eventSource: EventSource | null = null;
@@ -23,7 +29,6 @@ export function useSpellConfig(setIsCasting: SetStateFunc<boolean>) {
             setConfigs(config || DEFAULT_CONFIGS);
             setIsCasting(config?.status === 'RUNNING');
             eventSource = connectStream({ eventSource, setConfigs, setIsConnected, setSseError });
-            isInitialized.current = true;
         });
 
         return () => {
@@ -42,14 +47,14 @@ export function useSpellConfig(setIsCasting: SetStateFunc<boolean>) {
     }, [configs.status]);
 
     useEffect(() => {
-        if (isInitialized.current && isConnected && !sseError && !isReconnecting.current) {
-            isReconnecting.current = true;
+        if (isConnected && !sseError && !isAlreadyLoading.current) {
+            isAlreadyLoading.current = true;
 
             loadConfigs()
                 .then((configs) => {
                     setConfigs(configs || DEFAULT_CONFIGS);
                 })
-                .finally(() => (isReconnecting.current = false));
+                .finally(() => (isAlreadyLoading.current = false));
         }
     }, [isConnected, sseError]);
 
@@ -58,5 +63,6 @@ export function useSpellConfig(setIsCasting: SetStateFunc<boolean>) {
         setConfigs,
         isConnected,
         sseError,
+        connectionStatus,
     };
 }

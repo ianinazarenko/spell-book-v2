@@ -1,0 +1,46 @@
+.durationConfigs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.durationHint {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.input {
+    width: 80px;
+    box-sizing: border-box;
+    height: 40px;
+    padding: 0 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    text-align: center;
+    background: transparent;
+    border: 1px solid var(--button-secondary-border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+/*.input::-webkit-outer-spin-button,*/
+/*.input::-webkit-inner-spin-button {*/
+/*    -webkit-appearance: none;*/
+/*    margin: 0;*/
+/*}*/
+
+/*.input[type='number'] {*/
+/*    -moz-appearance: textfield;*/
+/*}*/
+
+.input:focus {
+    border-color: var(--text-primary);
+}
+
+.input:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}

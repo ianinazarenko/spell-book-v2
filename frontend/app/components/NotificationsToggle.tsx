@@ -2,6 +2,7 @@
 
 import { usePushNotifications } from '@/lib/hooks/usePushNotifications';
 import buttonStyles from '@/app/components/ControlButton.module.css';
+import styles from '@/app/components/NotificationsToggle.module.css';
 
 export default function NotificationsToggle() {
     const { isSupported, isSubscribed, isLoading, subscribeToPush, unsubscribeFromPush } =
@@ -11,12 +12,10 @@ export default function NotificationsToggle() {
         return <span>Push notifications are not supported</span>;
     }
 
-    const btnTxt = isLoading ? 'Loading...' : isSubscribed ? 'Push Off' : 'Push On';
+    const btnTxt = isLoading ? 'Loading...' : isSubscribed ? 'Turn Off 🔔' : 'Turn On 🔕';
 
     return (
-        <div>
-            <span>{isSubscribed ? '🔔 Pushes are active' : '🔕 Pushes are inactive'}</span>
-
+        <div className={`${styles.row}`}>
             <button
                 className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
                 onClick={isSubscribed ? unsubscribeFromPush : subscribeToPush}

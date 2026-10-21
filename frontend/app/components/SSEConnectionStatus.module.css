@@ -1,0 +1,28 @@
+.wrapper {
+    display: flex;
+}
+
+.status {
+    position: relative;
+    padding-left: 16px;
+
+    &:before {
+        position: absolute;
+        content: '';
+        top: 50%;
+        left: 0px;
+        transform: translateY(-50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--neutral-color);
+    }
+
+    &._connected:before {
+        background: var(--success-color);
+    }
+
+    &._disconnected:before {
+        background: var(--error-color);
+    }
+}

@@ -11,12 +11,13 @@ interface CastStatusProps {
 
 export function CastStatus({ isCasting, castCount, castTotal, duration }: CastStatusProps) {
     const durVal = Math.round(duration / 1000);
-    const percent = Math.round((castCount / castTotal) * 100) / 100;
+    const percent = Math.round((castCount / castTotal) * 100);
+    const percentNum = percent / 100;
     const sparklesClasses = `${styles.sparkles} ${isCasting ? styles._show : ''}`;
 
     const style = {
         ['--duration']: `${duration}ms`,
-        transform: `scaleX(${percent})`,
+        transform: `scaleX(${percentNum})`,
     };
 
     return (
@@ -33,11 +34,21 @@ export function CastStatus({ isCasting, castCount, castTotal, duration }: CastSt
                 <AnimatedCount value={castCount} />
             </div>
 
-            <div className={styles.percent}>
-                <span
-                    className={styles.percentInner}
-                    style={style}
-                ></span>
+            <div>
+                <div className={styles.row}>
+                    <div>
+                        {castCount} / {castTotal}
+                    </div>
+
+                    <div>{percent}%</div>
+                </div>
+
+                <div className={styles.percent}>
+                    <span
+                        className={styles.percentInner}
+                        style={style}
+                    ></span>
+                </div>
             </div>
 
             <div className={`${styles.info} ${isCasting ? styles._show : ''}`}>
