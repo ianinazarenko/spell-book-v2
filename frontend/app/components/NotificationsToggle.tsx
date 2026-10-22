@@ -9,7 +9,7 @@ export default function NotificationsToggle() {
         usePushNotifications();
 
     if (!isSupported) {
-        return <span>Push notifications are not supported</span>;
+        return <span>Pushes are not supported</span>;
     }
 
     const btnTxt = isLoading ? 'Loading...' : isSubscribed ? 'Turn Off 🔔' : 'Turn On 🔕';

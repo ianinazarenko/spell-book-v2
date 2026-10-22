@@ -42,13 +42,13 @@ export function CastStatus({ isCasting, castCount, castTotal, duration }: CastSt
 
                     <div>{percent}%</div>
                 </div>
+            </div>
 
-                <div className={styles.percent}>
-                    <span
-                        className={styles.percentInner}
-                        style={style}
-                    ></span>
-                </div>
+            <div className={styles.percent}>
+                <span
+                    className={styles.percentInner}
+                    style={style}
+                ></span>
             </div>
 
             <div className={`${styles.info} ${isCasting ? styles._show : ''}`}>

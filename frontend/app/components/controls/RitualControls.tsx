@@ -9,6 +9,7 @@ import { SpellItem } from '@shared/spells/spells.types';
 import TheModal from '@/app/components/common/TheModal';
 import AdditionalControls from '@/app/components/controls/AdditionalControls';
 import { createPortal } from 'react-dom';
+import { RiMagicLine, RiStopCircleLine } from '@remixicon/react';
 
 interface RitualControlsProps {
     onCast: () => void;
@@ -49,6 +50,7 @@ export function RitualControls({
     const spellsStr: string = JSON.stringify(spellsTextArr);
 
     const castBtnText = isCasting ? 'Stop the spell' : 'Cast a spell';
+    const CastIcon = isCasting ? RiStopCircleLine : RiMagicLine;
 
     // const style = {
     //     ['--duration']: `${duration}ms`,
@@ -93,7 +95,16 @@ export function RitualControls({
                     onClick={isCasting ? onStop : onCast}
                     disabled={isCastDisabled}
                 >
-                    {castBtnText}
+                    <span
+                        key={String(isCasting)}
+                        className={styles.castButtonStatus}
+                    >
+                        <CastIcon
+                            size={18}
+                            aria-hidden='true'
+                        />
+                        <span>{castBtnText}</span>
+                    </span>
                 </button>
 
                 <div className={styles.additionalControls}>

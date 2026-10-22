@@ -199,7 +199,7 @@ export default function Home() {
             <main className={styles.main}>
                 <HeaderLogo />
 
-                <div>
+                <div className={styles.spellContent}>
                     {/*<div>{isCompleted ? 'Completed' : null}</div>*/}
 
                     <ServiceStatuses connectionStatus={connectionStatus} />

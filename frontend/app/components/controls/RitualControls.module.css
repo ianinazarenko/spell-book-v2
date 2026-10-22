@@ -5,15 +5,16 @@
     width: 100%;
     max-width: 100%;
     margin-top: auto;
-    position: sticky;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
+    margin-inline: auto;
     /*background-color: var(--background);*/
-    padding: 16px 0 32px;
+    padding: 0 0 16px;
 
     @media (width >= 768px) {
-        max-width: 520px;
+        max-width: 600px;
     }
 }
 
@@ -21,9 +22,10 @@
     display: flex;
     flex-direction: row;
     gap: 12px;
-    background: var(--foreground);
+    background: var(--background);
     padding: 4px;
     border-radius: 100px;
+    margin: 0 16px;
     /*border: 1px solid var(--button-secondary-border);*/
 
 }
@@ -62,6 +64,26 @@
     flex: 1;
 }
 
+.castButtonStatus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    animation: castButtonFadeIn 180ms ease;
+}
+
+@keyframes castButtonFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .additionalControls {
     display: none;
 
@@ -72,6 +94,7 @@
 
 .moreButton {
     display: inline-block;
+    background: var(--background);
 
     @media (width >= 768px) {
         display: none;
