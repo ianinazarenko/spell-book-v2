@@ -56,7 +56,12 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
         const runId = randomUUID();
         const newConfig = await this.prisma.spellConfig.update({
             where: { id: CONFIG_ID },
-            data: { status: 'RUNNING', iterationsCompleted: isNewRitual ? 0 : undefined, runId },
+            data: {
+                status: 'RUNNING',
+                iterationsCompleted: isNewRitual ? 0 : undefined,
+                runId,
+                errorMessage: null,
+            },
         });
 
         // 3. Запускаем АСИНХРОННЫЙ фоновый процесс без await!

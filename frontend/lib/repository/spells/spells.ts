@@ -62,14 +62,14 @@ export async function clearSpells(): Promise<BaseAnswer> {
     }
 }
 
-export async function castSpells(): Promise<{ status: SpellStatus; errorMessage?: string }> {
+export async function castSpells(): Promise<{ status: SpellStatus; errorMessage: string | null }> {
     try {
         const newConfig = await fetchData<SpellConfig>({
             method: 'POST',
             route: `${BASE_URL}/cast-all`,
         });
 
-        return { status: newConfig.status };
+        return { status: newConfig.status, errorMessage: newConfig.errorMessage };
     } catch (e) {
         showError(e, 'castSpell');
         return { status: 'FAILED', errorMessage: getErrorMessage(e) };
