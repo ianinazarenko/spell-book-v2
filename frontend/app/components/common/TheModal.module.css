@@ -1,6 +1,8 @@
 .wrapper {
     position: fixed;
-    inset: 0;
+    inset: 0 0 auto;
+    height: 100vh;
+    height: 100dvh;
     z-index: 999;
 
     &._opening {
@@ -36,10 +38,10 @@
     left: 0;
     width: calc(100% - 2 * 8px);
     height: auto;
-    padding: 16px 16px 24px;
+    padding: 16px 16px 32px;
     background-color: var(--foreground);
     border-radius: 40px 40px 48px 48px;
-    margin: 8px 8px 16px;
+    margin: 8px;
 }
 
 .header {
