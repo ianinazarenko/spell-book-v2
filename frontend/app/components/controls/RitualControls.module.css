@@ -11,7 +11,7 @@
     right: 0;
     margin-inline: auto;
     /*background-color: var(--background);*/
-    padding: 0 0 16px;
+    padding: 0 0 24px;
 
     @media (width >= 768px) {
         max-width: 600px;
