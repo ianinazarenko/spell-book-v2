@@ -18,7 +18,7 @@ export class SpellsService {
 
     async getAllSpells(): Promise<SpellJob[]> {
         return this.prisma.spellJob.findMany({
-            orderBy: { createdAt: 'desc' },
+            orderBy: { createdAt: 'asc' },
         });
     }
 
@@ -29,13 +29,13 @@ export class SpellsService {
             if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
                 throw new HttpException(
                     { success: false, message: `Spell with ID ${id} is not found` },
-                    HttpStatus.NOT_FOUND,
+                    HttpStatus.NOT_FOUND
                 );
             }
 
             throw new HttpException(
                 { success: false, message: 'Failed to delete spell' },
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
 
@@ -48,7 +48,7 @@ export class SpellsService {
         } catch {
             throw new HttpException(
                 { success: false, message: 'Failed to delete spells' },
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
 
