@@ -42,8 +42,7 @@ export default function Home() {
     const [isAddingSpell, setIsAddingSpell] = useState(false);
 
     // --- Configs
-    const { configs, setConfigs, sseError, connectionStatus } =
-        useSpellConfig(setIsCasting);
+    const { configs, setConfigs, sseError, connectionStatus } = useSpellConfig(setIsCasting);
     const [optmConfigs, setOptmConfigs] = useOptimistic(
         configs,
         (currentConfigs: SpellConfig, newConfigs: Partial<SpellConfig>) => ({
@@ -204,12 +203,16 @@ export default function Home() {
 
                     <ServiceStatuses connectionStatus={connectionStatus} />
 
-                    <DurationConfigs
-                        initialDur={configs.durationMin}
-                        onConfigChange={handleConfigChange}
-                        isCasting={isCasting}
-                        isAddingSpell={isAddingSpell}
-                    />
+                    <div>
+                        <DurationConfigs
+                            initialDur={configs.durationMin}
+                            onConfigChange={handleConfigChange}
+                            isCasting={isCasting}
+                            isAddingSpell={isAddingSpell}
+                        />
+
+                        {/*<button>Refresh</button>*/}
+                    </div>
 
                     <CastStatus
                         isCasting={isCasting}

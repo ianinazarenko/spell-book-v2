@@ -9,7 +9,7 @@
 .input {
     background: transparent;
     border: 1px solid var(--button-secondary-border);
-    border-radius: 8px;
+    border-radius: 100px;
     padding: 0 16px;
     height: 40px;
     color: var(--text-primary);

@@ -10,6 +10,7 @@
     --button-secondary-border: #ebebeb;
 
     --error-color: #c84d4d;
+    --error-background: color-mix(in srgb, var(--error-color) 14%, transparent);
     --success-color: #287a32;
     --neutral-color: #757575;
 }

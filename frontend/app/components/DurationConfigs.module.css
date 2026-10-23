@@ -21,7 +21,7 @@
     text-align: center;
     background: transparent;
     border: 1px solid var(--button-secondary-border);
-    border-radius: 8px;
+    border-radius: 100px;
     outline: none;
     transition: border-color 0.2s;
 }
