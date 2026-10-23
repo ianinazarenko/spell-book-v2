@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
@@ -11,6 +12,10 @@ import { NotificationsModule } from './notifications/notifications.module.js';
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: [`.env.${process.env.NODE_ENV ?? 'development'}`, '.env'],
+        }),
         PrismaModule,
         SpellsModule,
         SpellConfigModule,
