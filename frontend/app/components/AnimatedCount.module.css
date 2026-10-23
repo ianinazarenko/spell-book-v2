@@ -1,6 +1,7 @@
 .wrapper {
     position: relative;
     overflow: hidden;
+    font-family: var(--font-literata);
     height: 80px;
     width: 220px;
     padding: 0 20px;

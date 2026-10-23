@@ -7,6 +7,7 @@
 .row {
     margin-top: 24px;
     margin-bottom: 16px;
+    font-family: var(--font-literata);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -48,6 +49,7 @@
 
 .info {
     height: 32px;
+    font-family: var(--font-literata);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     margin-top: 24px;
