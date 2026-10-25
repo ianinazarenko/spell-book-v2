@@ -4,12 +4,19 @@ import styles from './CastStatus.module.css';
 
 interface CastStatusProps {
     isCasting: boolean;
+    isCompleted: boolean;
     castCount: number;
     castTotal: number;
     duration: number;
 }
 
-export function CastStatus({ isCasting, castCount, castTotal, duration }: CastStatusProps) {
+export function CastStatus({
+    isCasting,
+    isCompleted,
+    castCount,
+    castTotal,
+    duration,
+}: CastStatusProps) {
     const durVal = Math.round(duration / 1000);
     const percent = Math.round((castCount / castTotal) * 100);
     const percentNum = percent / 100;
@@ -44,7 +51,7 @@ export function CastStatus({ isCasting, castCount, castTotal, duration }: CastSt
                 </div>
             </div>
 
-            <div className={styles.percent}>
+            <div className={`${styles.percent} ${isCompleted ? styles._completed : ''}`}>
                 <span
                     className={styles.percentInner}
                     style={style}

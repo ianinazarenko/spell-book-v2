@@ -216,6 +216,7 @@ export default function Home() {
 
                     <CastStatus
                         isCasting={isCasting}
+                        isCompleted={isCompleted}
                         castCount={configs.iterationsCompleted}
                         castTotal={configs.iterationsTotal}
                         duration={SPEED}
