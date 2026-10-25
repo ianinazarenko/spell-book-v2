@@ -125,11 +125,18 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
                     `\n✨🔮 Casting ritual: ${newConfig.iterationsCompleted}/${newConfig.iterationsTotal}\n${spellsString}`
                 );
 
+                if ((i + 1) % 10 === 0) {
+                    await this.notificationService.sendPushToAll(
+                        'Magical Operations Center 🪄',
+                        'The ritual is proceeding normally. No further action is required from you. ✨'
+                    );
+                }
+
                 // TODO: check where to place the best
                 if (i + 1 === count) {
                     await this.notificationService.sendPushToAll(
-                        'Spell Book! 🪄',
-                        'Spell is completed! ✨'
+                        'The ritual is completed 🪄',
+                        'Your worries have been successfully handled! ✨'
                     );
                 }
             }
