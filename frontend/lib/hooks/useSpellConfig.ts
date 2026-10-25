@@ -3,21 +3,17 @@ import { useEffect, useRef, useState } from 'react';
 import { loadConfigs } from '@/lib/repository/configs/configs';
 import { DEFAULT_CONFIGS } from '@/app/constants/configs';
 import { connectStream } from '@/lib/repository/sse-stream/sse-stream';
-import type { ConnectionStatus, SetStateFunc } from '@/types/types';
+import { ESSEStatus } from '@/app/constants/sse';
 
 export function useSpellConfig() {
     const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
     // sse connection
-    const [isConnected, setIsConnected] = useState(false);
+    const [sseStatus, setSseStatus] = useState<ESSEStatus>(ESSEStatus.Connecting);
     const [sseError, setSseError] = useState<string | null>(null);
 
     const loadRequestId = useRef<number>(0);
 
-    const connectionStatus: ConnectionStatus = isConnected
-        ? 'connected'
-        : sseError
-          ? 'disconnected'
-          : 'connecting';
+    const isConnected = sseStatus === ESSEStatus.Connected;
 
     // Apply only read latest requests
     function updateConfigsState(requestId: number, configs: Partial<SpellConfig>): void {
@@ -53,7 +49,7 @@ export function useSpellConfig() {
 
             eventSource = connectStream({
                 eventSource,
-                setIsConnected,
+                setSseStatus,
                 setSseError,
                 applyConfigsChange,
             });
@@ -65,7 +61,7 @@ export function useSpellConfig() {
             cancelled = true;
             if (eventSource) {
                 eventSource.close();
-                setIsConnected(false);
+                setSseStatus(ESSEStatus.Disconnected);
             }
         };
     }, []);
@@ -75,13 +71,13 @@ export function useSpellConfig() {
             const requestId = ++loadRequestId.current;
             loadConfigs().then((configs) => updateConfigsState(requestId, configs ?? {}));
         }
-    }, [isConnected, sseError]);
+    }, [sseStatus, sseError]);
 
     return {
         configs,
         applyConfigsChange,
         isConnected,
         sseError,
-        connectionStatus,
+        sseStatus,
     };
 }

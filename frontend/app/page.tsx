@@ -42,7 +42,7 @@ export default function Home() {
     const [isAddingSpell, setIsAddingSpell] = useState(false);
 
     // --- Configs
-    const { configs, applyConfigsChange, sseError, connectionStatus } = useSpellConfig();
+    const { configs, applyConfigsChange, sseStatus } = useSpellConfig();
 
     const [optmConfigs, setOptmConfigs] = useOptimistic(
         configs,
@@ -195,7 +195,7 @@ export default function Home() {
                 <HeaderLogo />
 
                 <div className={styles.spellContent}>
-                    <ServiceStatuses connectionStatus={connectionStatus} />
+                    <ServiceStatuses connectionStatus={sseStatus} />
 
                     <ConfigsRow
                         initialDur={optmConfigs.durationMin}
@@ -212,10 +212,7 @@ export default function Home() {
                         duration={SPEED}
                     />
 
-                    <ErrorStatus
-                        configs={configs}
-                        sseError={sseError}
-                    />
+                    <ErrorStatus configs={configs} />
 
                     <NewSpell onAdd={handleSubmit} />
 

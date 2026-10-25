@@ -19,6 +19,7 @@
     --error-background: color-mix(in srgb, var(--error-color) 14%, transparent);
     --success-color: #287a32;
     --neutral-color: #757575;
+    --warning-color: #a16207;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +37,7 @@
         --error-color: #813232;
         --success-color: #52b563;
         --neutral-color: #757575;
+        --warning-color: #fbbf24;
     }
 }
 

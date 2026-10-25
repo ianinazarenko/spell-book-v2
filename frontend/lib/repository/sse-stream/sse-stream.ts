@@ -1,13 +1,13 @@
 import { baseUrl } from '@/lib/repository/constants';
 import { SpellConfig } from '@shared/spells/spells.types';
 import { SetStateFunc } from '@/types/types';
-import { RefObject } from 'react';
+import { ESSEStatus } from '@/app/constants/sse';
 
 const RESOURCE = '/spells/progress';
 
 interface Args {
     eventSource: EventSource | null;
-    setIsConnected: SetStateFunc<boolean>;
+    setSseStatus: SetStateFunc<ESSEStatus>;
     setSseError: SetStateFunc<string | null>;
     applyConfigsChange: (configs: Partial<SpellConfig>) => void;
 }
@@ -15,7 +15,7 @@ interface Args {
 // Build Event Source
 export function connectStream({
     eventSource,
-    setIsConnected,
+    setSseStatus,
     setSseError,
     applyConfigsChange,
 }: Args): EventSource {
@@ -24,7 +24,7 @@ export function connectStream({
 
     // Событие успешного открытия соединения
     eventSource.onopen = () => {
-        setIsConnected(true);
+        setSseStatus(ESSEStatus.Connected);
         setSseError(null);
     };
 
@@ -41,8 +41,16 @@ export function connectStream({
     // Ошибка соединения (например, отвалилась сеть или упал бэкенд)
     eventSource.onerror = (err: Event) => {
         console.error('SSE connection error:', err);
-        setIsConnected(false);
-        setSseError('Lost SSE connection...');
+
+        if (eventSource.readyState === EventSource.CONNECTING) {
+            setSseStatus(ESSEStatus.Reconnecting); // Браузер ещё повторяет попытки.
+        }
+
+        if (eventSource.readyState === EventSource.CLOSED) {
+            setSseStatus(ESSEStatus.Disconnected); // Браузер больше не пытается подключиться.
+            setSseError('Lost SSE connection...');
+        }
+
         // EventSource сам попробует переподключиться,
         // но мы фиксируем статус для UI
     };

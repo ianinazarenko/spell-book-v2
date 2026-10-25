@@ -1,14 +1,24 @@
 import s from './SSEConnectionStatus.module.css';
-import type { ConnectionStatus } from '@/types/types';
+import { ESSEStatus } from '@/app/constants/sse';
 
 interface Props {
-    status: ConnectionStatus;
+    status: ESSEStatus;
 }
 
 export default function SSEConnectionStatus({ status }: Props): React.ReactElement {
-    const label = status === 'connecting' ? 'Connecting...' : status === 'connected' ? 'Connected' : 'Disconnected';
+    const label = {
+        [ESSEStatus.Disconnected]: 'Lost SSE connection',
+        [ESSEStatus.Reconnecting]: 'Reconnecting...',
+        [ESSEStatus.Connecting]: 'Connecting...',
+        [ESSEStatus.Connected]: 'Connected',
+    }[status];
 
-    const classes = status === 'connected' ? s._connected : status === 'disconnected' ? s._disconnected : '';
+    const classes = {
+        [ESSEStatus.Disconnected]: s._disconnected,
+        [ESSEStatus.Reconnecting]: s._reconnecting,
+        [ESSEStatus.Connecting]: s._connecting,
+        [ESSEStatus.Connected]: s._connected,
+    }[status];
 
     return (
         <div className={`${s.wrapper}`}>

@@ -25,4 +25,12 @@
     &._disconnected:before {
         background: var(--error-color);
     }
+
+    &._reconnecting:before {
+        background: var(--warning-color);
+    }
+
+    &._connecting:before {
+        background: var(--neutral-color);
+    }
 }

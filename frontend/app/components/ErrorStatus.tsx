@@ -4,11 +4,10 @@ import s from './ErrorStatus.module.css';
 
 interface Props {
     configs: SpellConfig;
-    sseError: string | null;
 }
-export default function ErrorStatus({ configs, sseError }: Props) {
-    const isError = configs.status === 'FAILED' || sseError;
-    const errorMessage = configs.errorMessage || sseError;
+export default function ErrorStatus({ configs }: Props) {
+    const isError = configs.status === 'FAILED';
+    const errorMessage = configs.errorMessage;
 
     return <>{isError && <div className={s.errorStatus}>{errorMessage ?? 'ERRROR'}</div>}</>;
 }
