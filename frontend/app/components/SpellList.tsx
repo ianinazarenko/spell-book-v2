@@ -1,5 +1,8 @@
 import { SpellItem } from '@shared/spells/spells.types';
+import { RiDeleteBinLine, RiFileCopyLine } from '@remixicon/react';
 import styles from './SpellList.module.css';
+import buttonStyles from './ControlButton.module.css';
+import CopyButton from '@/app/components/CopyButton';
 
 interface SpellListProps {
     spells: SpellItem[];
@@ -13,13 +16,27 @@ export function SpellList({ spells, onRemove }: SpellListProps) {
                 <p>Your book is currently empty...</p>
             ) : (
                 spells.map((spell) => (
-                    <p
+                    <article
                         key={spell.id}
-                        className={styles.spellItem}
-                        onClick={() => onRemove(spell.id)}
+                        className={styles.card}
                     >
-                        {spell.spellText}
-                    </p>
+                        <p className={styles.spellItem}>{spell.spellText}</p>
+
+                        <div className={styles.icons}>
+                            <CopyButton
+                                text={spell.spellText}
+                                size={'small'}
+                                equal
+                            />
+
+                            <button
+                                className={`${styles.iconWrap} ${buttonStyles.roundButtonSecondary}`}
+                                onClick={() => onRemove(spell.id)}
+                            >
+                                <RiDeleteBinLine size={18} />
+                            </button>
+                        </div>
+                    </article>
                 ))
             )}
         </div>

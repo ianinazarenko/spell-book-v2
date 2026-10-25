@@ -33,19 +33,25 @@ export default function AdditionalControls({
         <div className={s.AdditionalControls}>
             <button
                 className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-                onClick={onSave}
                 disabled={isSaveDisabled}
+                onClick={onSave}
             >
-                <RiSaveLine size={18} aria-hidden="true" />
+                <RiSaveLine
+                    size={18}
+                    aria-hidden='true'
+                />
                 Save
             </button>
 
             <button
                 className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-                onClick={onRestore}
                 disabled={isRestoreDisabled}
+                onClick={onRestore}
             >
-                <RiHistoryLine size={18} aria-hidden="true" />
+                <RiHistoryLine
+                    size={18}
+                    aria-hidden='true'
+                />
                 Restore
             </button>
 
@@ -56,10 +62,13 @@ export default function AdditionalControls({
 
             <button
                 className={`${buttonStyles.button} ${buttonStyles.buttonDanger}`}
-                onClick={onClear}
                 disabled={isClearDisabled}
+                onClick={onClear}
             >
-                <RiDeleteBinLine size={18} aria-hidden="true" />
+                <RiDeleteBinLine
+                    size={18}
+                    aria-hidden='true'
+                />
                 Clear All
             </button>
         </div>

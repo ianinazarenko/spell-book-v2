@@ -13,10 +13,17 @@ const TIMEOUT = 5000;
 
 interface CopyButtonProps {
     text: string;
+    size?: string;
     disabled?: boolean;
+    equal?: boolean;
 }
 
-export default function CopyButton({ text, disabled = false }: CopyButtonProps) {
+export default function CopyButton({
+    text,
+    size = 'medium',
+    disabled = false,
+    equal = false,
+}: CopyButtonProps) {
     const [status, setStatus] = useState<EStatus>(EStatus.Idle);
     const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -39,6 +46,15 @@ export default function CopyButton({ text, disabled = false }: CopyButtonProps) 
         [EStatus.Error]: RiCloseLine,
         [EStatus.Success]: RiCheckLine,
     }[status];
+
+    const sizeClass =
+        {
+            small: buttonStyles._small,
+            medium: buttonStyles._medium,
+        }[size] ?? buttonStyles._medium;
+
+    const classes =
+        `${buttonStyles.button} ${buttonStyles.buttonSecondary} ${styles.copyButton} ${statusClassName} ${sizeClass} ${equal ? buttonStyles._equal : ''}`.trim();
 
     // --- Handlers ---
     async function handleCopy() {
@@ -74,7 +90,7 @@ export default function CopyButton({ text, disabled = false }: CopyButtonProps) 
 
     return (
         <button
-            className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${styles.copyButton} ${statusClassName}`}
+            className={classes}
             onClick={handleCopy}
             disabled={disabled}
         >
@@ -89,7 +105,7 @@ export default function CopyButton({ text, disabled = false }: CopyButtonProps) 
                     aria-hidden='true'
                 />
 
-                <span className={styles.label}>{statusLabel}</span>
+                {!equal && <span className={styles.label}>{statusLabel}</span>}
             </span>
         </button>
     );

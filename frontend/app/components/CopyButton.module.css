@@ -1,5 +1,9 @@
 .copyButton {
     min-width: 54px;
+
+    &._withoutLabel {
+        min-width: unset;
+    }
 }
 
 .copyButtonSuccess {

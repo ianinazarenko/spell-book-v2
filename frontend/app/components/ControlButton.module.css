@@ -1,9 +1,17 @@
+._small {
+    --height: 32px;
+}
+
+._medium {
+    --height: 40px;
+}
+
 .button {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    height: 40px;
+    height: var(--height, 40px);
     padding: 0 16px;
     border-radius: 128px;
     border: 1px solid transparent;
@@ -17,6 +25,12 @@
     font-weight: 500;
     font-size: 14px;
     white-space: nowrap;
+
+    &._equal {
+        width: var(--height);
+        min-width: var(--height);
+        padding: 0;
+    }
 }
 
 .buttonPrimary {
@@ -51,7 +65,7 @@
     cursor: pointer;
 }
 
-.roundButtonPrimary {
+.roundButtonPrimary  {
     background: var(--text-primary);
     color: var(--background);
 }

@@ -76,6 +76,12 @@
     border-radius: 100px;
     overflow: hidden;
     outline: 1px solid var(--button-secondary-border);
+
+    &._completed {
+        .percentInner {
+            background-color: var(--success-color);
+        }
+    }
 }
 
 .percentInner {

@@ -1,7 +1,7 @@
 .spellList {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
     font-family: var(--font-literata);
     width: 100%;
     max-width: 520px;
@@ -13,16 +13,42 @@
     font-size: 16px;
     line-height: 24px;
     color: var(--text-primary);
-    cursor: pointer;
     transition:
         color 0.3s ease-in-out;
-    padding: 4px 0;
     user-select: none;
 }
 
+.card {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+    gap: 16px;
 
-@media (hover: hover) and (pointer: fine) {
-    .spellItem:hover {
-        color: var(--error-color);
+    @media (width >= 768px) {
+        flex-direction: row;
     }
+}
+
+.icons {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+
+    @media (width >= 768px) {
+        flex-direction: column-reverse;
+        gap: 8px;
+    }
+}
+
+.iconWrap {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+    border: 1px solid var(--button-secondary-border);
+    border-radius: 100px;
 }
