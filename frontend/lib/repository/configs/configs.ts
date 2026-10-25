@@ -6,11 +6,9 @@ const BASE_URL = '/config';
 
 export async function loadConfigs(): Promise<SpellConfig | undefined> {
     try {
-        const data = await fetchData<SpellConfig>({
+        return await fetchData<SpellConfig>({
             route: BASE_URL,
         });
-
-        return data;
     } catch (e) {
         showError(e, 'loadConfigs');
     }
@@ -25,7 +23,7 @@ export async function updateConfigs(body: {
     }
 
     try {
-        return fetchData<SpellConfig>({
+        return await fetchData<SpellConfig>({
             route: `${BASE_URL}/update`,
             method: 'POST',
             body,
@@ -37,7 +35,7 @@ export async function updateConfigs(body: {
 
 export async function clearCount(): Promise<SpellConfig | undefined> {
     try {
-        return fetchData<SpellConfig>({
+        return await fetchData<SpellConfig>({
             method: 'POST',
             route: `${BASE_URL}/clear-count`,
         });
@@ -48,12 +46,10 @@ export async function clearCount(): Promise<SpellConfig | undefined> {
 
 export async function getCount(): Promise<StatusAnswer> {
     try {
-        const data = await fetchData<StatusAnswer>({
+        return await fetchData<StatusAnswer>({
             method: 'GET',
             route: `${BASE_URL}/count`,
         });
-
-        return data;
     } catch (e) {
         showError(e, 'getCount');
         return {

@@ -26,13 +26,11 @@ export async function loadSpells(): Promise<SpellItem[]> {
 
 export async function createSpell(body: { spell: string }): Promise<SpellItem | undefined> {
     try {
-        const data = await fetchData<SpellItem>({
+        return await fetchData<SpellItem>({
             route: `${BASE_URL}/create`,
             method: 'POST',
             body,
         });
-
-        return data;
     } catch (e: unknown) {
         showError(e, 'createSpell');
     }
