@@ -96,12 +96,12 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
         completed: number;
         spellsString: string;
     }): Promise<void> {
-        const INTERVAL_MS = 2000;
+        const TICK_MS = 2000;
 
         try {
             const count = Math.max(0, totalIterations - completed);
             for (let i = 0; i < count; i++) {
-                await new Promise((resolve) => setTimeout(resolve, INTERVAL_MS));
+                await new Promise((resolve) => setTimeout(resolve, TICK_MS));
 
                 // Имитация внезапной ошибки (для тестов можно раскомментировать)
                 // if (i === 3) throw new Error('Magic overflow: spell casting failed!');
@@ -125,18 +125,20 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
                     `\n✨🔮 Casting ritual: ${newConfig.iterationsCompleted}/${newConfig.iterationsTotal}\n${spellsString}`
                 );
 
-                if ((i + 1) % 10 === 0) {
+                const NOTIFY_EVERY_MS = 30 * 60 * 1000; // 30 min
+                const NOTIFY_EVERY_TICKS = NOTIFY_EVERY_MS / TICK_MS; // 900
+
+                if (i > 0 && i % NOTIFY_EVERY_TICKS === 0) {
                     await this.notificationService.sendPushToAll(
-                        'Magical Operations Center 🪄',
+                        '🪄 Magical Operations Center',
                         'The ritual is proceeding normally. No further action is required from you. ✨'
                     );
                 }
 
-                // TODO: check where to place the best
                 if (i + 1 === count) {
                     await this.notificationService.sendPushToAll(
-                        'The ritual is completed 🪄',
-                        'Your worries have been successfully handled! ✨'
+                        '🧙‍♂️ Magical Operations Center',
+                        'The spell has been successfully completed. Reality has been notified. You may now relax. ✨'
                     );
                 }
             }
@@ -158,7 +160,10 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
                 CastSpellsService.name
             );
 
-            await this.notificationService.sendPushToAll('Spell Book 🧙‍♂️', 'Spell is failed 😓');
+            await this.notificationService.sendPushToAll(
+                '🧌 Magical Operations Center',
+                'Oops. A small magical hiccup. No dragons were harmed. Please try again. 🐉'
+            );
         }
     }
 
