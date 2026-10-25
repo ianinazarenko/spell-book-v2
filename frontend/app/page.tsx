@@ -31,6 +31,7 @@ import ErrorStatus from '@/app/components/ErrorStatus';
 import { useSpellConfig } from '@/lib/hooks/useSpellConfig';
 import NotificationsToggle from '@/app/components/NotificationsToggle';
 import ServiceStatuses from '@/app/components/ServiceStatuses';
+import ConfigsRow from '@/app/components/ConfigsRow';
 
 export default function Home() {
     const SPEED = 2000;
@@ -81,7 +82,7 @@ export default function Home() {
     async function handleConfigChange(body: {
         iterationsTotal: number;
         durationMin: number | null;
-    }) {
+    }): Promise<void> {
         startTransition(async () => {
             setOptmConfigs({ iterationsTotal: 0 });
             const configs = await updateConfigs(body);
@@ -203,16 +204,12 @@ export default function Home() {
 
                     <ServiceStatuses connectionStatus={connectionStatus} />
 
-                    <div>
-                        <DurationConfigs
-                            initialDur={configs.durationMin}
-                            onConfigChange={handleConfigChange}
-                            isCasting={isCasting}
-                            isAddingSpell={isAddingSpell}
-                        />
-
-                        {/*<button>Refresh</button>*/}
-                    </div>
+                    <ConfigsRow
+                        initialDur={configs.durationMin}
+                        isCasting={isCasting}
+                        isAddingSpell={isAddingSpell}
+                        onConfigChange={handleConfigChange}
+                    />
 
                     <CastStatus
                         isCasting={isCasting}
