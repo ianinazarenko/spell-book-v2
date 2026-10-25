@@ -12,7 +12,12 @@ interface DurationConfigsProps {
     }) => Promise<void>;
 }
 
-export function DurationConfigs({ initialDur, isCasting, isAddingSpell, onConfigChange }: DurationConfigsProps) {
+export function DurationConfigs({
+    initialDur,
+    isCasting,
+    isAddingSpell,
+    onConfigChange,
+}: DurationConfigsProps) {
     const SPELL_STEP_SEC = 2;
 
     const [duration, setDuration] = useState<number>(initialDur || 60);
@@ -30,7 +35,7 @@ export function DurationConfigs({ initialDur, isCasting, isAddingSpell, onConfig
         const durationSec = duration * 60;
         const iterationsTotal = Math.round(durationSec / SPELL_STEP_SEC);
 
-        onConfigChange({ iterationsTotal, durationMin: duration });
+        void onConfigChange({ iterationsTotal, durationMin: duration });
     }
 
     useEffect(() => {

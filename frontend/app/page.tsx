@@ -39,11 +39,11 @@ export default function Home() {
     // Состояние страницы
     const [isPending, startTransition] = useTransition();
 
-    const [isCasting, setIsCasting] = useState<boolean>(false);
     const [isAddingSpell, setIsAddingSpell] = useState(false);
 
     // --- Configs
-    const { configs, setConfigs, sseError, connectionStatus } = useSpellConfig(setIsCasting);
+    const { configs, applyConfigsChange, sseError, connectionStatus } = useSpellConfig();
+
     const [optmConfigs, setOptmConfigs] = useOptimistic(
         configs,
         (currentConfigs: SpellConfig, newConfigs: Partial<SpellConfig>) => ({
@@ -62,13 +62,11 @@ export default function Home() {
 
     const [savedSpells, setSavedSpells] = useState<SavedSpellItem[]>([]);
 
-    // const spellsRef = useRef(spells); // Пока не используется
-    // const timerIdRef = useRef<NodeJS.Timeout | null>(null);
-
     // Значения для отображения
     const areSpellsSame = compareSpells();
     const canRestore = savedSpells.length > 0 && !areSpellsSame;
-    const isCompleted = configs.status === 'COMPLETED';
+    const isCompleted = optmConfigs.status === 'COMPLETED';
+    const isCasting = optmConfigs.status === 'RUNNING';
 
     function compareSpells() {
         const spellsIds = spells.map((s) => s.id);
@@ -84,11 +82,14 @@ export default function Home() {
         durationMin: number | null;
     }): Promise<void> {
         startTransition(async () => {
-            setOptmConfigs({ iterationsTotal: 0 });
-            const configs = await updateConfigs(body);
+            setOptmConfigs({
+                iterationsTotal: body.iterationsTotal,
+                durationMin: body.durationMin,
+            });
 
+            const configs = await updateConfigs(body);
             if (configs) {
-                setConfigs(configs);
+                applyConfigsChange(configs);
             }
         });
     }
@@ -137,7 +138,7 @@ export default function Home() {
             }
 
             if (configs) {
-                setConfigs(configs);
+                applyConfigsChange(configs);
             }
         });
     }
@@ -146,26 +147,27 @@ export default function Home() {
     async function castSpell() {
         if (isCasting || !spells.length) return;
 
-        if (
-            configs.status === 'COMPLETED' ||
-            configs.iterationsCompleted >= configs.iterationsTotal
-        ) {
-            setConfigs((prev) => ({ ...prev, iterationsCompleted: 0 }));
-            setIsCasting(true);
-        }
+        startTransition(async () => {
+            if (
+                configs.status === 'COMPLETED' ||
+                configs.iterationsCompleted >= configs.iterationsTotal
+            ) {
+                setOptmConfigs({ iterationsCompleted: 0, status: 'QUEUED' });
+            }
 
-        const data = await castSpells();
+            const data = await castSpells();
 
-        setConfigs((prev) => ({ ...prev, ...data }));
-        setIsCasting(data.status === 'RUNNING');
+            applyConfigsChange(data);
+        });
     }
 
     async function stopSpell() {
-        const { status } = await stopCasting();
+        startTransition(async () => {
+            setOptmConfigs({ status: 'QUEUED' });
+            const { status } = await stopCasting();
 
-        if (status !== 'RUNNING') {
-            setIsCasting(false);
-        }
+            applyConfigsChange({ status });
+        });
     }
 
     //Сохранение и восстановление из отдельной таблицы
@@ -187,25 +189,16 @@ export default function Home() {
         });
     }, []);
 
-    // Пустой список выключает локальное отображение ритуала
-    // useEffect(() => {
-    //     if (spells.length < 1 && isCasting) {
-    //         setIsCasting(false);
-    //     }
-    // }, [spells]);
-
     return (
         <div className={styles.page}>
             <main className={styles.main}>
                 <HeaderLogo />
 
                 <div className={styles.spellContent}>
-                    {/*<div>{isCompleted ? 'Completed' : null}</div>*/}
-
                     <ServiceStatuses connectionStatus={connectionStatus} />
 
                     <ConfigsRow
-                        initialDur={configs.durationMin}
+                        initialDur={optmConfigs.durationMin}
                         isCasting={isCasting}
                         isAddingSpell={isAddingSpell}
                         onConfigChange={handleConfigChange}
@@ -214,8 +207,8 @@ export default function Home() {
                     <CastStatus
                         isCasting={isCasting}
                         isCompleted={isCompleted}
-                        castCount={configs.iterationsCompleted}
-                        castTotal={configs.iterationsTotal}
+                        castCount={optmConfigs.iterationsCompleted}
+                        castTotal={optmConfigs.iterationsTotal}
                         duration={SPEED}
                     />
 

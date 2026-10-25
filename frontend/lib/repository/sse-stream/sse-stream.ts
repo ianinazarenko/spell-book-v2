@@ -1,22 +1,23 @@
 import { baseUrl } from '@/lib/repository/constants';
 import { SpellConfig } from '@shared/spells/spells.types';
 import { SetStateFunc } from '@/types/types';
+import { RefObject } from 'react';
 
 const RESOURCE = '/spells/progress';
 
 interface Args {
     eventSource: EventSource | null;
-    setConfigs: SetStateFunc<SpellConfig>;
     setIsConnected: SetStateFunc<boolean>;
     setSseError: SetStateFunc<string | null>;
+    applyConfigsChange: (configs: Partial<SpellConfig>) => void;
 }
 
 // Build Event Source
 export function connectStream({
     eventSource,
-    setConfigs,
     setIsConnected,
     setSseError,
+    applyConfigsChange,
 }: Args): EventSource {
     // Создаём стандартный браузерный EventSource
     eventSource = new EventSource(`${baseUrl}${RESOURCE}`);
@@ -31,7 +32,7 @@ export function connectStream({
     eventSource.onmessage = (event: MessageEvent) => {
         try {
             const updatedConfig: SpellConfig = JSON.parse(event.data);
-            setConfigs(updatedConfig);
+            applyConfigsChange(updatedConfig);
         } catch (e) {
             console.error('Ошибка парсинга SSE event:', e);
         }
