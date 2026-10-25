@@ -25,7 +25,6 @@ export function SpellList({ spells, onRemove }: SpellListProps) {
                         <div className={styles.icons}>
                             <CopyButton
                                 text={spell.spellText}
-                                size={'small'}
                                 equal
                             />
 

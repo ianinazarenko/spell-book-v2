@@ -7,6 +7,7 @@
 }
 
 .button {
+    --default-height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,9 +28,10 @@
     white-space: nowrap;
 
     &._equal {
-        width: var(--height);
-        min-width: var(--height);
+        width: var(--height, 40px);
+        min-width: var(--height, 40px);
         padding: 0;
+        flex-shrink: 0;
     }
 }
 

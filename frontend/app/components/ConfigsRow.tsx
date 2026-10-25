@@ -1,6 +1,4 @@
 import { DurationConfigs } from '@/app/components/DurationConfigs';
-import { RiRefreshLine } from '@remixicon/react';
-import buttonStyles from './ControlButton.module.css';
 import styles from './ConfigsRow.module.css';
 
 interface Props {
@@ -19,10 +17,6 @@ export default function ConfigsRow({
     isAddingSpell,
     onConfigChange,
 }: Props) {
-    function handleRefreshPage() {
-        window.location.reload();
-    }
-
     return (
         <div className={styles.row}>
             <DurationConfigs
@@ -31,14 +25,6 @@ export default function ConfigsRow({
                 isAddingSpell={isAddingSpell}
                 onConfigChange={onConfigChange}
             />
-
-            <button
-                className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-                onClick={handleRefreshPage}
-            >
-                <RiRefreshLine size={18} />
-                Refresh
-            </button>
         </div>
     );
 }
