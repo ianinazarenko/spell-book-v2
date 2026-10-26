@@ -4,6 +4,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @media (width >= 768px) {
+        margin: 0 auto 24px;
+        max-width: 520px;
+    }
 }
 
 .logo {
