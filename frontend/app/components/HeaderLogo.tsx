@@ -14,9 +14,10 @@ export function HeaderLogo() {
 
             <button
                 className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${buttonStyles._equal}`}
+                aria-label="Reload page"
                 onClick={handleRefreshPage}
             >
-                <RiRefreshLine size={18} />
+                <RiRefreshLine size={18} aria-hidden="true" />
             </button>
         </header>
     );
