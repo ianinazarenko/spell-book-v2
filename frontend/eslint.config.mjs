@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 const eslintConfig = defineConfig([
     ...nextVitals,
@@ -8,7 +9,30 @@ const eslintConfig = defineConfig([
     {
         // Base rules for all files
         files: ['**/*.{js,jsx,ts,tsx}'],
+        plugins: {
+            'simple-import-sort': simpleImportSort,
+        },
         rules: {
+            '@typescript-eslint/consistent-type-imports': [
+                'error',
+                { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
+            ],
+            'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
+            'simple-import-sort/imports': [
+                'error',
+                {
+                    groups: [
+                        ['^.*\\u0000$'],
+                        ['^\\u0000'],
+                        ['^node:'],
+                        ['^@?\\w'],
+                        ['^@shared/'],
+                        ['^@/'],
+                        ['^\\.\\.'],
+                        ['^\\.'],
+                    ],
+                },
+            ],
             complexity: ['error', { max: 15 }],
             'max-lines': ['error', 500],
             'no-alert': 'off',

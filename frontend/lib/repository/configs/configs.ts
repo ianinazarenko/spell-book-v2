@@ -1,6 +1,8 @@
-import { SpellConfig, StatusAnswer } from '@shared/spells/spells.types';
+import type { SpellConfig, StatusAnswer } from '@shared/spells/spells.types';
+
+import { showError } from '@/lib/repository/utils';
+
 import { fetchData } from '..';
-import { showError } from '../utils';
 
 const BASE_URL = '/config';
 
