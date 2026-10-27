@@ -125,7 +125,7 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
                     `\n✨🔮 Casting ritual: ${newConfig.iterationsCompleted}/${newConfig.iterationsTotal}\n${spellsString}`
                 );
 
-                const NOTIFY_EVERY_MS = 30 * 60 * 1000; // 30 min
+                const NOTIFY_EVERY_MS = 15 * 60 * 1000; // 30 min
                 const NOTIFY_EVERY_TICKS = NOTIFY_EVERY_MS / TICK_MS; // 900
 
                 if (i > 0 && i % NOTIFY_EVERY_TICKS === 0) {
