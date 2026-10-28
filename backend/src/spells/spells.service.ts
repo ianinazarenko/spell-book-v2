@@ -18,7 +18,7 @@ export class SpellsService {
 
     async getAllSpells(): Promise<SpellJob[]> {
         return this.prisma.spellJob.findMany({
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'desc' },
         });
     }
 

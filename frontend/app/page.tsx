@@ -1,20 +1,21 @@
 'use client';
 
 // Types
-import { SavedSpellItem, type SpellItem } from '@shared/spells/spells.types';
-import { SpellConfig } from '@shared/spells/spells.types';
+import type { SavedSpellItem, SpellConfig, SpellItem } from '@shared/spells/spells.types';
 
-import styles from './page.module.css';
-import { useEffect, useState, useRef, useOptimistic, useTransition } from 'react';
+import { useEffect, useOptimistic, useState, useTransition } from 'react';
 
-// Компоненты
-import { HeaderLogo } from './components/HeaderLogo';
-import { DurationConfigs } from './components/DurationConfigs';
-import { NewSpell } from './components/NewSpell';
-import { SpellList } from './components/SpellList';
-import { CastStatus } from './components/CastStatus';
-import { RitualControls } from './components/controls/RitualControls';
-import { clearCount, getCount, loadConfigs } from '@/lib/repository/configs/configs';
+import { CastStatus } from '@/app/components/CastStatus';
+import ConfigsRow from '@/app/components/ConfigsRow';
+import { RitualControls } from '@/app/components/controls/RitualControls';
+import ErrorStatus from '@/app/components/ErrorStatus';
+import { HeaderLogo } from '@/app/components/HeaderLogo';
+import { NewSpell } from '@/app/components/NewSpell';
+import ServiceStatuses from '@/app/components/ServiceStatuses';
+import { SpellList } from '@/app/components/SpellList';
+import { useSpellConfig } from '@/lib/hooks/useSpellConfig';
+import { clearCount } from '@/lib/repository/configs/configs';
+import { updateConfigs } from '@/lib/repository/configs/configs';
 import {
     castSpells,
     clearSpells,
@@ -26,18 +27,14 @@ import {
     saveSpells,
     stopCasting,
 } from '@/lib/repository/spells/spells';
-import { updateConfigs } from '@/lib/repository/configs/configs';
-import ErrorStatus from '@/app/components/ErrorStatus';
-import { useSpellConfig } from '@/lib/hooks/useSpellConfig';
-import NotificationsToggle from '@/app/components/NotificationsToggle';
-import ServiceStatuses from '@/app/components/ServiceStatuses';
-import ConfigsRow from '@/app/components/ConfigsRow';
+
+import styles from './page.module.css';
 
 export default function Home() {
     const SPEED = 2000;
 
     // Состояние страницы
-    const [isPending, startTransition] = useTransition();
+    const [_, startTransition] = useTransition();
 
     const [isAddingSpell, setIsAddingSpell] = useState(false);
 
@@ -105,7 +102,7 @@ export default function Home() {
             const spell = await createSpell({ spell: body.spell });
 
             if (spell) {
-                setSpells((prev) => [...prev, spell]);
+                setSpells((prev) => [spell, ...prev]);
                 return { success: true };
             }
 
