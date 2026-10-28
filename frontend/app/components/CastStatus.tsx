@@ -1,4 +1,5 @@
 import { HashLoader } from 'react-spinners';
+
 import { AnimatedCount } from './AnimatedCount';
 import styles from './CastStatus.module.css';
 

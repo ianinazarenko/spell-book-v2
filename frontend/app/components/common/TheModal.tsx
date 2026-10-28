@@ -1,7 +1,9 @@
-import s from './TheModal.module.css';
-import buttonStyles from '../ControlButton.module.css';
 import { RiCloseLine } from '@remixicon/react';
 import React from 'react';
+
+import buttonStyles from '../ControlButton.module.css';
+
+import s from './TheModal.module.css';
 
 interface Props {
     open: boolean;

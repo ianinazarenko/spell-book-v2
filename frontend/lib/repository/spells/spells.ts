@@ -1,13 +1,14 @@
-import {
+import type {
     BaseAnswer,
     SavedSpellItem,
     SpellConfig,
     SpellItem,
     SpellStatus,
 } from '@shared/spells/spells.types';
+
+import { getErrorMessage, showError } from '@/lib/repository/utils';
+
 import { fetchData } from '..';
-import { getErrorMessage, showError } from '../utils';
-import { SpellJob } from '../../../../backend/src/generated/prisma/client';
 
 const BASE_URL = '/spells';
 
@@ -114,9 +115,9 @@ export async function saveSpells(): Promise<SavedSpellItem[]> {
     }
 }
 
-export async function restoreSpells(): Promise<SpellJob[]> {
+export async function restoreSpells(): Promise<SpellItem[]> {
     try {
-        const data = await fetchData<SpellJob[]>({
+        const data = await fetchData<SpellItem[]>({
             method: 'POST',
             route: `${BASE_URL}/restore`,
         });

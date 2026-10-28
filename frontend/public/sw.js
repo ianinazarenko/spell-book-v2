@@ -1,16 +1,16 @@
 // public/sw.js
-self.addEventListener('install', (event) => {
+self.addEventListener('install', () => {
     console.log('[Service Worker] Installed!');
     self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', () => {
     console.log('[Service Worker] Activated!');
     return self.clients.claim();
 });
 
 // Перехвачик запросов (пока просто пропускает всё в сеть)
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', () => {
     // Тут в будущем можно рулить кешем для офлайн-режима
 });
 
@@ -43,7 +43,7 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
-    const tartgetUrl = event.notification.data?.url || '/';
+    const targetUrl = event.notification.data?.url || '/';
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {

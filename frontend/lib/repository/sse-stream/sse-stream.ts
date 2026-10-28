@@ -1,7 +1,8 @@
-import { baseUrl } from '@/lib/repository/constants';
-import { SpellConfig } from '@shared/spells/spells.types';
-import { SetStateFunc } from '@/types/types';
+import type { SetStateFunc } from '@/types/types';
+import type { SpellConfig } from '@shared/spells/spells.types';
+
 import { ESSEStatus } from '@/app/constants/sse';
+import { baseUrl } from '@/lib/repository/constants';
 
 const RESOURCE = '/spells/progress';
 

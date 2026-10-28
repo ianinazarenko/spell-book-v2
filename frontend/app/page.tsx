@@ -34,7 +34,7 @@ export default function Home() {
     const SPEED = 2000;
 
     // Состояние страницы
-    const [_, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
 
     const [isAddingSpell, setIsAddingSpell] = useState(false);
 

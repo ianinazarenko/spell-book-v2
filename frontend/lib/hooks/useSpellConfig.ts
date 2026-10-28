@@ -1,9 +1,11 @@
-import { SpellConfig } from '@shared/spells/spells.types';
+import type { SpellConfig } from '@shared/spells/spells.types';
+
 import { useEffect, useRef, useState } from 'react';
-import { loadConfigs } from '@/lib/repository/configs/configs';
+
 import { DEFAULT_CONFIGS } from '@/app/constants/configs';
-import { connectStream } from '@/lib/repository/sse-stream/sse-stream';
 import { ESSEStatus } from '@/app/constants/sse';
+import { loadConfigs } from '@/lib/repository/configs/configs';
+import { connectStream } from '@/lib/repository/sse-stream/sse-stream';
 
 export function useSpellConfig() {
     const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
@@ -28,16 +30,16 @@ export function useSpellConfig() {
         ++loadRequestId.current;
     }
 
-    function handleVisibilityChange() {
-        if (document.visibilityState === 'visible') {
-            const requestId = ++loadRequestId.current;
-            loadConfigs().then((configs) => updateConfigsState(requestId, configs ?? {}));
-        }
-    }
-
     useEffect(() => {
         let eventSource: EventSource | null = null;
         let cancelled = false;
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                const requestId = ++loadRequestId.current;
+                loadConfigs().then((configs) => updateConfigsState(requestId, configs ?? {}));
+            }
+        };
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -71,7 +73,7 @@ export function useSpellConfig() {
             const requestId = ++loadRequestId.current;
             loadConfigs().then((configs) => updateConfigsState(requestId, configs ?? {}));
         }
-    }, [sseStatus, sseError]);
+    }, [isConnected, sseStatus, sseError]);
 
     return {
         configs,

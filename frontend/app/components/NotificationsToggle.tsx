@@ -1,9 +1,10 @@
 'use client';
 
-import { usePushNotifications } from '@/lib/hooks/usePushNotifications';
+import { RiNotification4Line, RiNotificationOffLine } from '@remixicon/react';
+
 import buttonStyles from '@/app/components/ControlButton.module.css';
 import styles from '@/app/components/NotificationsToggle.module.css';
-import { RiNotification4Line, RiNotificationOffLine } from '@remixicon/react';
+import { usePushNotifications } from '@/lib/hooks/usePushNotifications';
 
 export default function NotificationsToggle() {
     const { isSupported, isSubscribed, isLoading, subscribeToPush, unsubscribeFromPush } =

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+
 import styles from '@/app/components/AnimatedCount.module.css';
 
 interface IProps {
@@ -13,23 +14,24 @@ export function AnimatedCount({ value }: IProps) {
     const prevClasses = `${styles.digit} ${styles.previous} ${isAnimating ? styles._animating : ''}`;
     const currentClasses = `${styles.digit} ${styles.current} ${isAnimating ? styles._animating : ''}`;
 
+    if (value !== displayValue) {
+        setPrevValue(displayValue);
+        setIsAnimating(true);
+        setDisplayValue(value);
+    }
+
     function handleStopAnimation() {
         setIsAnimating(false);
         setPrevValue(null);
     }
 
-    useEffect(() => {
-        if (value === displayValue) return;
-
-        setPrevValue(displayValue);
-        setIsAnimating(true);
-        setDisplayValue(value);
-    }, [value]);
-
     return (
         <div className={`${styles.wrapper}`}>
             {prevValue !== null && (
-                <div className={prevClasses} onAnimationEnd={handleStopAnimation}>
+                <div
+                    className={prevClasses}
+                    onAnimationEnd={handleStopAnimation}
+                >
                     {prevValue}
                 </div>
             )}

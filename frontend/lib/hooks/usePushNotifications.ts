@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { urlBase64ToUint8Array } from '@/lib/utils/vapid';
+
 import { subscribe, unsubscribe } from '@/lib/repository/notifications/notifications';
+import { urlBase64ToUint8Array } from '@/lib/utils/vapid';
 
 export function usePushNotifications() {
     const [isSupported, setIsSupported] = useState<boolean>(false);
@@ -65,7 +66,7 @@ export function usePushNotifications() {
             const subscription = await registration.pushManager.getSubscription();
             setIsSubscribed(Boolean(subscription));
         } catch (err) {
-            console.warn('Could not get subscription');
+            console.warn('Could not get subscription', err);
         } finally {
             setIsLoading(false);
         }

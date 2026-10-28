@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import styles from './DurationConfigs.module.css';
 
@@ -12,6 +12,8 @@ interface DurationConfigsProps {
     }) => Promise<void>;
 }
 
+const DEFAULT_DUR = 60;
+
 export function DurationConfigs({
     initialDur,
     isCasting,
@@ -20,16 +22,26 @@ export function DurationConfigs({
 }: DurationConfigsProps) {
     const SPELL_STEP_SEC = 2;
 
-    const [duration, setDuration] = useState<number>(initialDur || 60);
-    const [prevDuration, setPrevDuration] = useState<number>(duration);
+    const [userDuration, setUserDuration] = useState<string | null>(null);
+    const [prevDuration, setPrevDuration] = useState<number | null>(null);
+    const duration: string = userDuration ?? String(initialDur ?? DEFAULT_DUR);
 
     function handleDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setPrevDuration(duration);
-        setDuration(Math.max(1, parseInt(e.target.value) || 1));
+        setUserDuration(e.target.value);
     }
 
     function handleConfigChange() {
-        if (prevDuration === duration) return;
+        if (userDuration === null) return;
+        const previous = prevDuration ?? initialDur ?? DEFAULT_DUR;
+        const entered = Number(userDuration);
+
+        const duration =
+            userDuration === '' || !Number.isFinite(entered) || entered === 0
+                ? previous
+                : Math.min(360, Math.max(0, Math.trunc(entered)));
+
+        setUserDuration(String(duration));
+        if (previous === duration) return;
         setPrevDuration(duration);
 
         const durationSec = duration * 60;
@@ -38,19 +50,13 @@ export function DurationConfigs({
         void onConfigChange({ iterationsTotal, durationMin: duration });
     }
 
-    useEffect(() => {
-        if (initialDur && initialDur !== duration) {
-            if (duration) setPrevDuration(duration);
-            setDuration(initialDur);
-        }
-    }, [initialDur]);
-
     return (
         <div className={styles.durationConfigs}>
             <input
                 type='number'
                 min='0'
                 max='360'
+                step={5}
                 value={duration}
                 className={styles.input}
                 disabled={isCasting || isAddingSpell}

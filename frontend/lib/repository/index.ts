@@ -1,6 +1,7 @@
-import { FetchParams } from './types';
+import type { FetchParams } from './types';
+
 import { baseUrl } from './constants';
-import { getParamsString, getBodyString } from './utils';
+import { getBodyString,getParamsString } from './utils';
 
 export async function fetchData<T>({
     route = '',

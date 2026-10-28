@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
-import { Literata } from 'next/font/google';
+
 import './globals.css';
+
+import { Literata } from 'next/font/google';
+
 import ServiceWorker from '@/app/ServiceWorker';
 
 const literata = Literata({

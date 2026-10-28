@@ -1,5 +1,6 @@
-import s from './SSEConnectionStatus.module.css';
 import { ESSEStatus } from '@/app/constants/sse';
+
+import s from './SSEConnectionStatus.module.css';
 
 interface Props {
     status: ESSEStatus;

@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
 import { RiCheckLine, RiCloseLine, RiFileCopyLine } from '@remixicon/react';
+import { useEffect,useRef, useState } from 'react';
+
 import buttonStyles from './ControlButton.module.css';
 import styles from './CopyButton.module.css';
 

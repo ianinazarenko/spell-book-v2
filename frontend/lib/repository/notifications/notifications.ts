@@ -1,5 +1,6 @@
+import type { Subscription } from '@shared/spells/spells.types';
+
 import { fetchData } from '@/lib/repository';
-import { Subscription } from '@shared/spells/spells.types';
 
 const BASE_URL = '/notifications';
 

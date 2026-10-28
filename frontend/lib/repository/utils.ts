@@ -1,4 +1,4 @@
-import { QueryParams, BodyObj } from './types';
+import type { BodyObj,QueryParams } from './types';
 
 export function getParamsString(query: QueryParams): string {
     return query ? '?' + new URLSearchParams(query).toString() : '';

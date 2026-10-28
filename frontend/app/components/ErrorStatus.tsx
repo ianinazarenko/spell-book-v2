@@ -1,4 +1,4 @@
-import { SpellConfig } from '@shared/spells/spells.types';
+import type { SpellConfig } from '@shared/spells/spells.types';
 
 import s from './ErrorStatus.module.css';
 

@@ -1,8 +1,9 @@
+import type { ESSEStatus } from '@/app/constants/sse';
+
 import NotificationsToggle from '@/app/components/NotificationsToggle';
+import SSEConnectionStatus from '@/app/components/SSEConnectionStatus';
 
 import styles from './ServiceStatuses.module.css';
-import SSEConnectionStatus from '@/app/components/SSEConnectionStatus';
-import { ESSEStatus } from '@/app/constants/sse';
 
 interface Props {
     connectionStatus: ESSEStatus;

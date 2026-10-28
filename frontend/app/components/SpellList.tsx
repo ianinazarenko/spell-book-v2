@@ -1,8 +1,11 @@
-import { SpellItem } from '@shared/spells/spells.types';
-import { RiDeleteBinLine, RiFileCopyLine } from '@remixicon/react';
-import styles from './SpellList.module.css';
-import buttonStyles from './ControlButton.module.css';
+import type { SpellItem } from '@shared/spells/spells.types';
+
+import { RiDeleteBinLine } from '@remixicon/react';
+
 import CopyButton from '@/app/components/CopyButton';
+
+import buttonStyles from './ControlButton.module.css';
+import styles from './SpellList.module.css';
 
 interface SpellListProps {
     spells: SpellItem[];

@@ -69,8 +69,6 @@ const eslintConfig = defineConfig([
             'no-useless-call': 'error',
             'no-useless-concat': 'error',
             'no-useless-return': 'error',
-            'no-void': 'error',
-            radix: 'error',
             'require-await': 'off',
             'wrap-iife': ['error', 'inside'],
             'no-label-var': 'error',

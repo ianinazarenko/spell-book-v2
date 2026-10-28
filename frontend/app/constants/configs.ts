@@ -1,5 +1,4 @@
-import { SpellConfig } from '../../../backend/src/generated/prisma/client';
-import { underline } from 'next/dist/lib/picocolors';
+import type { SpellConfig } from '@shared/spells/spells.types';
 
 const DEFAULT_CONFIG_ID = 'spell-config';
 

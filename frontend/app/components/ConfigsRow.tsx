@@ -1,4 +1,5 @@
 import { DurationConfigs } from '@/app/components/DurationConfigs';
+
 import styles from './ConfigsRow.module.css';
 
 interface Props {

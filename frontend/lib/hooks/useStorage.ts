@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useRef, useSyncExternalStore } from 'react';
 
 type TStorage = 'localStorage' | 'sessionStorage';
 type TStateValue<T> = T | ((prevVal: T) => T);

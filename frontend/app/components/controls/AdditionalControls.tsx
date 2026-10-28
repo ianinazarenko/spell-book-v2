@@ -1,6 +1,8 @@
-import CopyButton from '@/app/components/CopyButton';
-import buttonStyles from '@/app/components/ControlButton.module.css';
 import { RiDeleteBinLine, RiHistoryLine, RiSaveLine } from '@remixicon/react';
+
+import buttonStyles from '@/app/components/ControlButton.module.css';
+import CopyButton from '@/app/components/CopyButton';
+
 import s from './AdditionalControls.module.css';
 
 interface Props {

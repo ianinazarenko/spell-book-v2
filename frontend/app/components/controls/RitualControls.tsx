@@ -1,15 +1,15 @@
-import { JSX, useEffect, useState } from 'react';
+import type { SpellItem } from '@shared/spells/spells.types';
+import type { JSX } from 'react';
 
-import CopyButton from '@/app/components/CopyButton';
-import { useIsHydrated } from '@/lib/hooks/useIsHydrated';
-
-import buttonStyles from '@/app/components/ControlButton.module.css';
-import styles from '@/app/components/controls/RitualControls.module.css';
-import { SpellItem } from '@shared/spells/spells.types';
-import TheModal from '@/app/components/common/TheModal';
-import AdditionalControls from '@/app/components/controls/AdditionalControls';
-import { createPortal } from 'react-dom';
 import { RiMagicLine, RiStopCircleLine } from '@remixicon/react';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+
+import TheModal from '@/app/components/common/TheModal';
+import buttonStyles from '@/app/components/ControlButton.module.css';
+import AdditionalControls from '@/app/components/controls/AdditionalControls';
+import styles from '@/app/components/controls/RitualControls.module.css';
+import { useIsHydrated } from '@/lib/hooks/useIsHydrated';
 
 interface RitualControlsProps {
     onCast: () => void;
