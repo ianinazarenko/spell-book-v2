@@ -74,8 +74,10 @@ export function usePushNotifications() {
 
     useEffect(() => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
+            // Возможности браузера проверяем после появления компонента.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsSupported(true);
-            checkExistingSubscription();
+            void checkExistingSubscription();
         } else {
             setIsSupported(false);
             setIsLoading(false);
