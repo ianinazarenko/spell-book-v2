@@ -130,15 +130,15 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
 
                 if (i > 0 && i % NOTIFY_EVERY_TICKS === 0) {
                     await this.notificationService.sendPushToAll(
-                        '🪄 Magical Operations Center',
-                        'The ritual is proceeding normally. No further action is required from you. ✨'
+                        '🆗 Magical Operations Center',
+                        '🪄The ritual is proceeding normally. No further action is required from you. ✨'
                     );
                 }
 
                 if (i + 1 === count) {
                     await this.notificationService.sendPushToAll(
-                        '🧙‍♂️ Magical Operations Center',
-                        'The spell has been successfully completed. Reality has been notified. You may now relax. ✨'
+                        '✅ Magical Operations Center',
+                        '️️️🧙‍♂️️️ The spell has been successfully completed. Reality has been notified. You may now relax. ✨'
                     );
                 }
             }
@@ -161,8 +161,8 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
             );
 
             await this.notificationService.sendPushToAll(
-                '🧌 Magical Operations Center',
-                'Oops. A small magical hiccup. No dragons were harmed. Please try again. 🐉'
+                '🆘 Magical Operations Center',
+                '🧌Oops. A small magical hiccup. No dragons were harmed. Please try again. 🐉'
             );
         }
     }
