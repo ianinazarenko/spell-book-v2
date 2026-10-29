@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CastSpellsService } from './cast-spells.service.js';
 import { CastSpellController } from './cast-spells.controller.js';
-import { NotificationsService } from '../../notifications/notifications.service.js';
+import { NotificationsModule } from '../../notifications/notifications.module.js';
 
 @Module({
-    providers: [CastSpellsService, NotificationsService],
+    providers: [CastSpellsService],
     controllers: [CastSpellController],
+    imports: [NotificationsModule],
 })
 export class CastSpellsModule {}
