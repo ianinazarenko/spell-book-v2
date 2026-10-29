@@ -9,6 +9,7 @@ import { CastSpellsModule } from './ritual/cast/cast-spells.module.js';
 import { SpellConfigModule } from './ritual/config/spell-config.module.js';
 import { SaveSpellsModule } from './spells/saved/save-spells.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
+import { SSEModule } from './sse/sse.module.js';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { NotificationsModule } from './notifications/notifications.module.js';
         CastSpellsModule,
         SaveSpellsModule,
         NotificationsModule,
+        SSEModule,
     ],
     controllers: [AppController],
     providers: [AppService],

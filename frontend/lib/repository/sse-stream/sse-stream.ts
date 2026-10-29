@@ -4,7 +4,7 @@ import type { SpellConfig } from '@shared/spells/spells.types';
 import { ESSEStatus } from '@/app/constants/sse';
 import { baseUrl } from '@/lib/repository/constants';
 
-const RESOURCE = '/spells/progress';
+const RESOURCE = '/events';
 
 interface Args {
     eventSource: EventSource | null;

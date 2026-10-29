@@ -6,8 +6,8 @@ import { Prisma, SpellConfig } from '../../generated/prisma/client.js';
 import { randomUUID } from 'node:crypto';
 import { FileLogger } from '../../file-logger/file-logger.js';
 import { SpellItem } from '../../shared/spells/spells.types.js';
-import { Observable, Subject } from 'rxjs';
 import { NotificationsService } from '../../notifications/notifications.service.js';
+import { SSEService } from '../../sse/sse.service.js';
 
 interface AnswerStatus {
     message: string;
@@ -16,25 +16,17 @@ interface AnswerStatus {
 }
 
 @Injectable()
-export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
+export class CastSpellsService implements OnModuleInit {
     private readonly logger = new FileLogger(CastSpellsService.name);
-    private readonly ritualProgress$ = new Subject<SpellConfig>();
 
     constructor(
         private readonly prisma: PrismaService,
-        private readonly notificationService: NotificationsService
+        private readonly notificationService: NotificationsService,
+        private readonly sseService: SSEService
     ) {}
 
     async onModuleInit(): Promise<void> {
         await this.recoverStaleJobs();
-    }
-
-    onModuleDestroy(): void {
-        this.ritualProgress$.complete();
-    }
-
-    getProgressStream(): Observable<SpellConfig> {
-        return this.ritualProgress$.asObservable();
     }
 
     async castAllSpellsJob(): Promise<SpellConfig> {
@@ -118,7 +110,7 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
 
                 const spellsString = this.prepareSpellsString(currentSpells);
 
-                this.ritualProgress$.next(newConfig);
+                this.sseService.emitRitualProgress(newConfig);
 
                 this.logger.log(
                     `\n✨🔮 Casting ritual: ${newConfig.iterationsCompleted}/${newConfig.iterationsTotal}\n${spellsString}`
