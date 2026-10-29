@@ -38,17 +38,13 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
     }
 
     async castAllSpellsJob(): Promise<SpellConfig> {
-        const spells = await this.prisma.spellJob.findMany({
-            orderBy: { createdAt: 'asc' },
-        });
+        const spellsCount = await this.prisma.spellJob.count();
 
         const config = await this.prisma.spellConfig.findUnique({ where: { id: CONFIG_ID } });
 
-        if (!config || !spells.length) {
+        if (!config || spellsCount === 0) {
             throw new Error('There is no spells to cast');
         }
-
-        const spellsString = this.prepareSpellsString(spells);
 
         const isNewRitual =
             config.status === 'COMPLETED' || config.iterationsCompleted >= config.iterationsTotal;
@@ -70,7 +66,6 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
             runId,
             totalIterations: config.iterationsTotal,
             completed: isNewRitual ? 0 : config.iterationsCompleted,
-            spellsString,
         });
 
         return newConfig;
@@ -89,12 +84,10 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
         runId,
         totalIterations,
         completed,
-        spellsString,
     }: {
         runId: string;
         totalIterations: number;
         completed: number;
-        spellsString: string;
     }): Promise<void> {
         const TICK_MS = 2000;
 
@@ -118,6 +111,12 @@ export class CastSpellsService implements OnModuleInit, OnModuleDestroy {
                         status: i + 1 === count ? 'COMPLETED' : 'RUNNING',
                     },
                 });
+
+                const currentSpells = await this.prisma.spellJob.findMany({
+                    orderBy: { createdAt: 'asc' },
+                });
+
+                const spellsString = this.prepareSpellsString(currentSpells);
 
                 this.ritualProgress$.next(newConfig);
 
