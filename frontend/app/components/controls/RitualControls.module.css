@@ -1,17 +1,18 @@
 .ctas {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
     width: 100%;
     max-width: 100%;
     margin-top: auto;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin-inline: auto;
-    /*background-color: var(--background);*/
+
+    /* background-color: var(--background); */
     padding: 0 0 24px;
+    flex-direction: column;
+    gap: 6px;
+    margin-inline: auto;
 
     @media (width >= 768px) {
         max-width: 600px;
@@ -20,25 +21,26 @@
 
 .row {
     display: flex;
-    flex-direction: row;
-    gap: 12px;
-    background: var(--background);
+    margin: 0 16px;
     padding: 4px;
     border-radius: 100px;
-    margin: 0 16px;
-    /*border: 1px solid var(--button-secondary-border);*/
+    background: var(--background);
+    flex-direction: row;
+    gap: 12px;
+
+    /* border: 1px solid var(--button-secondary-border); */
 
 }
 
 .ctasReady {
-    animation: controlsFadeIn 0.18s ease-out both;
+    animation: controls-fade-in 0.18s ease-out both;
 }
 
 .ctasPlaceholder {
     min-height: 40px;
 }
 
-@keyframes controlsFadeIn {
+@keyframes controls-fade-in {
     from {
         opacity: 0;
         transform: translateY(4px);
@@ -50,7 +52,7 @@
     }
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
     .ctas {
         flex-wrap: wrap;
     }
@@ -69,10 +71,10 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    animation: castButtonFadeIn 180ms ease;
+    animation: cast-button-fade-in 180ms ease;
 }
 
-@keyframes castButtonFadeIn {
+@keyframes cast-button-fade-in {
     from {
         opacity: 0;
         transform: translateY(6px) scale(0.96);

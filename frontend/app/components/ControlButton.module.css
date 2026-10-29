@@ -8,14 +8,17 @@
 
 .button {
     --default-height: 40px;
+
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
     height: var(--height, 40px);
     padding: 0 16px;
     border-radius: 128px;
     border: 1px solid transparent;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
     transition:
         background-color 0.2s ease,
         border-color 0.2s ease,
@@ -23,15 +26,13 @@
         opacity 0.2s ease,
         transform 0.2s ease;
     cursor: pointer;
-    font-weight: 500;
-    font-size: 14px;
-    white-space: nowrap;
+    gap: 8px;
 
     &._equal {
+        flex-shrink: 0;
         width: var(--height, 40px);
         min-width: var(--height, 40px);
         padding: 0;
-        flex-shrink: 0;
     }
 }
 
@@ -41,8 +42,8 @@
 }
 
 .buttonSecondary {
-    background: transparent;
     border-color: var(--button-secondary-border);
+    background: transparent;
     color: var(--text-primary);
 }
 
@@ -53,8 +54,8 @@
 
 .roundButton {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
     padding: 0;
@@ -73,8 +74,8 @@
 }
 
 .roundButtonSecondary {
-    background: transparent;
     border-color: var(--button-secondary-border);
+    background: transparent;
     color: var(--text-primary);
 }
 
@@ -94,8 +95,8 @@
     }
 
     .buttonSecondary:not(:disabled):hover {
-        background: var(--button-secondary-hover);
         border-color: transparent;
+        background: var(--button-secondary-hover);
     }
 
     .buttonDanger:not(:disabled):hover {
@@ -107,8 +108,8 @@
     }
 
     .roundButtonSecondary:not(:disabled):hover {
-        background: var(--button-secondary-hover);
         border-color: transparent;
+        background: var(--button-secondary-hover);
     }
 }
 

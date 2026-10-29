@@ -6,31 +6,31 @@
     position: relative;
     padding-left: 16px;
 
-    &:before {
-        position: absolute;
+    &::before {
         content: '';
+        position: absolute;
         top: 50%;
-        left: 0px;
-        transform: translateY(-50%);
+        left: 0;
         width: 6px;
         height: 6px;
         border-radius: 50%;
         background: var(--neutral-color);
+        transform: translateY(-50%);
     }
 
-    &._connected:before {
+    &._connected::before {
         background: var(--success-color);
     }
 
-    &._disconnected:before {
+    &._disconnected::before {
         background: var(--error-color);
     }
 
-    &._reconnecting:before {
+    &._reconnecting::before {
         background: var(--warning-color);
     }
 
-    &._connecting:before {
+    &._connecting::before {
         background: var(--neutral-color);
     }
 }

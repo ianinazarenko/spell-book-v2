@@ -1,22 +1,22 @@
 .newSpell {
     display: flex;
-    gap: 12px;
+    align-items: center;
     width: 100%;
     max-width: 520px;
-    align-items: center;
+    gap: 12px;
 }
 
 .input {
-    background: transparent;
-    border: 1px solid var(--button-secondary-border);
-    border-radius: 100px;
-    padding: 0 16px;
-    height: 40px;
-    color: var(--text-primary);
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.2s;
     box-sizing: border-box;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 100px;
+    border: 1px solid var(--button-secondary-border);
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    color: var(--text-primary);
+    transition: border-color 0.2s;
 }
 
 .input:focus {
@@ -34,17 +34,17 @@
 
 .btn {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     height: 40px;
     padding: 0 16px;
     border-radius: 128px;
     border: 1px solid transparent;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
     transition: 0.2s;
     cursor: pointer;
-    font-weight: 500;
-    font-size: 14px;
-    white-space: nowrap;
 }
 
 .btnPrimary {

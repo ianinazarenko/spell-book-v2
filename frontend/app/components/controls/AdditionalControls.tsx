@@ -32,7 +32,7 @@ export default function AdditionalControls({
     const isCopyDisabled = !hasSpells;
 
     return (
-        <div className={s.AdditionalControls}>
+        <div className={s.additionalControls}>
             <button
                 className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
                 disabled={isSaveDisabled}

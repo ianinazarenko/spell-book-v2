@@ -1,12 +1,12 @@
 .wrapper {
     position: relative;
     overflow: hidden;
-    font-family: var(--font-literata);
-    height: 80px;
     width: 220px;
+    height: 80px;
     padding: 0 20px;
     border-top:  2px solid var(--button-secondary-border);
     border-bottom: 2px solid var(--button-secondary-border);
+    font-family: var(--font-literata);
 
     & > * {
         font-size: 80px;
@@ -25,11 +25,11 @@
 
 .digit._animating {
     &.previous {
-        animation: slideOutUp 700ms ease forwards;
+        animation: slide-out-up 700ms ease forwards;
     }
 
     &.current {
-        animation: slideInFromBottom 700ms ease forwards;
+        animation: slide-from-bottom 700ms ease forwards;
 
     }
 }
@@ -39,24 +39,26 @@
     transform: translateY(0);
 }
 
- @keyframes slideOutUp {
+ @keyframes slide-out-up {
       from {
-          transform: translateY(0);
           opacity: 1;
+          transform: translateY(0);
       }
+
       to {
-          transform: translateY(-100%);
           opacity: 0;
+          transform: translateY(-100%);
       }
   }
 
-  @keyframes slideInFromBottom {
+  @keyframes slide-from-bottom {
       from {
-          transform: translateY(100%);
           opacity: 0;
+          transform: translateY(100%);
       }
+
       to {
-          transform: translateY(0);
           opacity: 1;
+          transform: translateY(0);
       }
   }

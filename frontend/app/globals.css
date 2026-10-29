@@ -1,20 +1,17 @@
 @property --font-literata {
     syntax: '*';
     inherits: true;
-    initial-value: Georgia;
+    initial-value: georgia;
 }
 
 :root {
     --background: #fafafa;
-    --foreground: #fff;
-
-    --text-primary: #000;
-    --text-secondary: #666;
-
+    --foreground: #ffffff;
+    --text-primary: #000000;
+    --text-secondary: #666666;
     --button-primary-hover: #383838;
     --button-secondary-hover: #f2f2f2;
     --button-secondary-border: #ebebeb;
-
     --error-color: #c84d4d;
     --error-background: color-mix(in srgb, var(--error-color) 14%, transparent);
     --success-color: #287a32;
@@ -24,16 +21,13 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background: #111;
-        --foreground: #222;
-
+        --background: #111111;
+        --foreground: #222222;
         --text-primary: #ededed;
-        --text-secondary: #999;
-
-        --button-primary-hover: #ccc;
+        --text-secondary: #999999;
+        --button-primary-hover: #cccccc;
         --button-secondary-hover: #1a1a1a;
-        --button-secondary-border: #666;
-
+        --button-secondary-border: #666666;
         --error-color: #813232;
         --success-color: #52b563;
         --neutral-color: #757575;
@@ -43,25 +37,25 @@
 
 * {
     box-sizing: border-box;
-    padding: 0;
     margin: 0;
+    padding: 0;
 }
 
 html,
 body {
-    max-width: 100vw;
     overflow-x: clip;
+    max-width: 100vw;
 }
 
 body {
-    color: var(--text-secondary);
     background: var(--background);
     font-family: Helvetica, Arial, sans-serif;
+    color: var(--text-secondary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-    color: inherit;
     text-decoration: none;
+    color: inherit;
 }
