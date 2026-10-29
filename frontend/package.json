@@ -8,6 +8,8 @@
         "start": "next start -p 8080 -H 127.0.0.1",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
+        "stylelint": "stylelint 'app/**/*.css'",
+        "stylelint:fix": "stylelint 'app/**/*.css' --fix",
         "prepare": "cd .. && husky frontend/.husky",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
