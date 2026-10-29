@@ -1,16 +1,15 @@
-import {
-    HttpException,
-    Injectable,
-    InternalServerErrorException,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
-import { BaseAnswer, SavedSpellItem } from '../../shared/spells/spells.types.js';
+import { SavedSpellItem } from '../../shared/spells/spells.types.js';
 import { SpellJob } from '../../generated/prisma/client.js';
+import { SSEService } from '../../sse/sse.service.js';
 
 @Injectable()
 export class SaveSpellsService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly sseService: SSEService
+    ) {}
 
     async getSavedSpells(): Promise<SavedSpellItem[]> {
         return await this.prisma.savedSpell.findMany();
@@ -53,6 +52,8 @@ export class SaveSpellsService {
         ]);
 
         const newSpells: SpellJob[] = await this.prisma.spellJob.findMany();
+
+        this.sseService.emitSpellsChanged();
 
         return newSpells;
     }

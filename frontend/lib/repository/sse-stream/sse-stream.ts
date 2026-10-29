@@ -11,6 +11,7 @@ interface Args {
     setSseStatus: SetStateFunc<ESSEStatus>;
     setSseError: SetStateFunc<string | null>;
     applyConfigsChange: (configs: Partial<SpellConfig>) => void;
+    syncSpells: () => Promise<void>;
 }
 
 // Build Event Source
@@ -19,6 +20,7 @@ export function connectStream({
     setSseStatus,
     setSseError,
     applyConfigsChange,
+    syncSpells,
 }: Args): EventSource {
     // Создаём стандартный браузерный EventSource
     eventSource = new EventSource(`${baseUrl}${RESOURCE}`);
@@ -38,6 +40,8 @@ export function connectStream({
             console.error('Ошибка парсинга SSE event:', e);
         }
     };
+
+    eventSource.addEventListener('spells-changed', syncSpells);
 
     // Ошибка соединения (например, отвалилась сеть или упал бэкенд)
     eventSource.onerror = (err: Event) => {

@@ -3,7 +3,7 @@
 // Types
 import type { SavedSpellItem, SpellConfig, SpellItem } from '@shared/spells/spells.types';
 
-import { useEffect, useOptimistic, useState, useTransition } from 'react';
+import { useEffect, useOptimistic, useRef, useState, useTransition } from 'react';
 
 import { CastStatus } from '@/app/components/CastStatus';
 import ConfigsRow from '@/app/components/ConfigsRow';
@@ -39,7 +39,7 @@ export default function Home() {
     const [isAddingSpell, setIsAddingSpell] = useState(false);
 
     // --- Configs
-    const { configs, applyConfigsChange, sseStatus } = useSpellConfig();
+    const { configs, applyConfigsChange, sseStatus } = useSpellConfig(syncSpells);
 
     const [optmConfigs, setOptmConfigs] = useOptimistic(
         configs,
@@ -58,6 +58,7 @@ export default function Home() {
     );
 
     const [savedSpells, setSavedSpells] = useState<SavedSpellItem[]>([]);
+    const loadRequestId = useRef<number>(0);
 
     // Значения для отображения
     const areSpellsSame = compareSpells();
@@ -102,7 +103,9 @@ export default function Home() {
             const spell = await createSpell({ spell: body.spell });
 
             if (spell) {
-                setSpells((prev) => [spell, ...prev]);
+                setSpells((prev) => {
+                    return prev.some((s) => s.id === spell.id) ? prev : [spell, ...prev];
+                });
                 return { success: true };
             }
 
@@ -168,20 +171,25 @@ export default function Home() {
     }
 
     //Сохранение и восстановление из отдельной таблицы
-    async function handleSave() {
+    async function handleSave(): Promise<void> {
         const savedSpells = await saveSpells();
         setSavedSpells(savedSpells);
     }
 
-    async function handleRestore() {
+    async function handleRestore(): Promise<void> {
         const restoredSpells = await restoreSpells();
         setSpells(restoredSpells);
     }
 
+    async function syncSpells(): Promise<void> {
+        const requestId = ++loadRequestId.current;
+        const spells = await loadSpells();
+        if (requestId === loadRequestId.current) setSpells(spells);
+    }
+
     // При открытии страницы загружаем данные с бэка
     useEffect(() => {
-        Promise.all([loadSpells(), loadSavedSpells()]).then(([spells, savedSpells]) => {
-            setSpells(spells || []);
+        Promise.all([loadSavedSpells(), syncSpells()]).then(([savedSpells]) => {
             setSavedSpells(savedSpells);
         });
     }, []);

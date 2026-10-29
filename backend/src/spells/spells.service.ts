@@ -3,17 +3,25 @@ import { CreateSpellDto } from './create-spell.dto.js';
 import { Prisma, SpellJob } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { BaseAnswer } from '../shared/spells/spells.types.js';
+import { SSEService } from '../sse/sse.service.js';
 
 @Injectable()
 export class SpellsService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly sseService: SSEService
+    ) {}
 
     async createSpell(dto: CreateSpellDto): Promise<SpellJob> {
         const data = {
             spellText: dto.spell,
         };
 
-        return this.prisma.spellJob.create({ data });
+        const newSpell = await this.prisma.spellJob.create({ data });
+
+        this.sseService.emitSpellsChanged();
+
+        return newSpell;
     }
 
     async getAllSpells(): Promise<SpellJob[]> {
@@ -25,6 +33,7 @@ export class SpellsService {
     async deleteSpell(id: string): Promise<BaseAnswer> {
         try {
             await this.prisma.spellJob.delete({ where: { id } });
+            this.sseService.emitSpellsChanged();
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
                 throw new HttpException(
@@ -45,6 +54,7 @@ export class SpellsService {
     async deleteAllSpells(): Promise<BaseAnswer> {
         try {
             await this.prisma.spellJob.deleteMany();
+            this.sseService.emitSpellsChanged();
         } catch {
             throw new HttpException(
                 { success: false, message: 'Failed to delete spells' },

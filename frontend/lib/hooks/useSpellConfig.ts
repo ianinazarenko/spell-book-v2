@@ -7,7 +7,7 @@ import { ESSEStatus } from '@/app/constants/sse';
 import { loadConfigs } from '@/lib/repository/configs/configs';
 import { connectStream } from '@/lib/repository/sse-stream/sse-stream';
 
-export function useSpellConfig() {
+export function useSpellConfig(syncSpells: () => Promise<void>) {
     const [configs, setConfigs] = useState<SpellConfig>(DEFAULT_CONFIGS);
     // sse connection
     const [sseStatus, setSseStatus] = useState<ESSEStatus>(ESSEStatus.Connecting);
@@ -17,7 +17,7 @@ export function useSpellConfig() {
 
     const isConnected = sseStatus === ESSEStatus.Connected;
 
-    // Apply only read latest requests
+    // Apply only latest read request
     function updateConfigsState(requestId: number, configs: Partial<SpellConfig>): void {
         if (requestId === loadRequestId.current) {
             setConfigs((prev) => ({ ...prev, ...configs }));
@@ -54,6 +54,7 @@ export function useSpellConfig() {
                 setSseStatus,
                 setSseError,
                 applyConfigsChange,
+                syncSpells,
             });
         });
 
@@ -72,6 +73,7 @@ export function useSpellConfig() {
         if (isConnected && !sseError) {
             const requestId = ++loadRequestId.current;
             loadConfigs().then((configs) => updateConfigsState(requestId, configs ?? {}));
+            void syncSpells();
         }
     }, [isConnected, sseStatus, sseError]);
 
