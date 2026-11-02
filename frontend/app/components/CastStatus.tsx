@@ -19,7 +19,7 @@ export function CastStatus({
     duration,
 }: CastStatusProps) {
     const durVal = Math.round(duration / 1000);
-    const percent = Math.round((castCount / castTotal) * 100);
+    const percent = Math.floor((castCount / castTotal) * 100);
     const percentNum = percent / 100;
     const sparklesClasses = `${styles.sparkles} ${isCasting ? styles._show : ''}`;
 

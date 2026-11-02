@@ -10,7 +10,8 @@
     justify-content: space-between;
     margin-top: 24px;
     margin-bottom: 16px;
-    font-family: var(--font-literata);
+    font-family: var(--font-literata), Georgia, serif;
+    font-variant-numeric: tabular-nums;
 }
 
 .sparkles {
