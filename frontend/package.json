@@ -25,7 +25,7 @@
         "*.{js,jsx,ts,tsx,mjs,cjs}": "eslint"
     },
     "devDependencies": {
-        "@types/node": "^24.19.2",
+        "@types/node": "^26.6.6",
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "eslint": "^9",
