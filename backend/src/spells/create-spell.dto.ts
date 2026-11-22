@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Max, Min } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateSpellDto {
     @IsString()

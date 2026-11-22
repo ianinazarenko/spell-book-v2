@@ -21,7 +21,7 @@
     background: transparent;
     outline: none;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text-primary);
     transition: border-color 0.2s;
 }

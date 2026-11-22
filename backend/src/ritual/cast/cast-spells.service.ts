@@ -1,6 +1,5 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
-import { SpellStatus } from '../../generated/prisma/enums.js';
 import { CONFIG_ID } from '../../shared/config/constants.js';
 import { Prisma, SpellConfig } from '../../generated/prisma/client.js';
 import { randomUUID } from 'node:crypto';
@@ -8,12 +7,6 @@ import { FileLogger } from '../../file-logger/file-logger.js';
 import { SpellItem } from '../../shared/spells/spells.types.js';
 import { NotificationsService } from '../../notifications/notifications.service.js';
 import { SSEService } from '../../sse/sse.service.js';
-
-interface AnswerStatus {
-    message: string;
-    status: SpellStatus;
-    success: boolean;
-}
 
 @Injectable()
 export class CastSpellsService implements OnModuleInit {

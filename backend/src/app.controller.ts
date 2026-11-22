@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service.js';
-import { CreateSpellDto } from './spells/create-spell.dto.js';
 
 @Controller()
 export class AppController {

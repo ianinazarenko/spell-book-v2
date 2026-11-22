@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpCode, HttpStatus, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { NotificationsService } from './notifications.service.js';
 import { SubscriptionDto } from './subscription.dto.js';
 import { Subscription } from '../shared/spells/spells.types.js';

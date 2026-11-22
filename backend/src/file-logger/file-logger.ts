@@ -1,4 +1,4 @@
-import { ConsoleLogger, OnModuleInit } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import path from 'node:path';
 import * as fs from 'node:fs';
 
