@@ -7,15 +7,17 @@
     width: 100%;
     max-width: 100%;
     margin-top: auto;
-
-    /* background-color: var(--background); */
-    padding: 0 0 24px;
+    padding: 0 0 calc(var(--safe-bottom) + var(--offset));
     flex-direction: column;
     gap: 6px;
     margin-inline: auto;
 
     @media (width >= 768px) {
         max-width: 600px;
+    }
+
+    @media (display-mode: standalone) {
+        padding: 0 0 calc(var(--safe-bottom) + 24px);
     }
 }
 

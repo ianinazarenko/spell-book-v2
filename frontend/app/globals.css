@@ -17,6 +17,11 @@
     --success-color: #287a32;
     --neutral-color: #757575;
     --warning-color: #a16207;
+
+    /* Positioning */
+    --safe-top: env(safe-area-inset-top, 4px);
+    --safe-bottom: env(safe-area-inset-bottom, 4px);
+    --offset: 8px;
 }
 
 @media (prefers-color-scheme: dark) {
