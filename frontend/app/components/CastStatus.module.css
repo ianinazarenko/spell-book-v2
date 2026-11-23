@@ -85,7 +85,9 @@
 
 .percent {
     position: sticky;
-    top: 32px;
+
+    /* top: 36px; */
+    top: calc(env(safe-area-inset-top, 4px) + 4px);
     z-index: 1;
     overflow: hidden;
     width: 100%;
@@ -94,6 +96,30 @@
     border-radius: 100px;
     background-color: var(--foreground);
     outline: 1px solid var(--button-secondary-border);
+}
+
+@media (display-mode: standalone) {
+    .percent {
+        /* position: fixed; */
+
+        /* height: 11px; */
+
+        /* background-clip: text; */
+
+        /* background-clip: text; */
+
+        /* background-color: #ffffff; */
+
+        /* inset: 0 0 auto; */
+
+        /* pointer-events: none; */
+        top: calc(env(safe-area-inset-top, 4px));
+        height: 22px;
+
+        .percentInner {
+            background-color: red;
+        }
+    }
 }
 
 .percentInner {
