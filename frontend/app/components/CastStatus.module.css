@@ -68,7 +68,7 @@
 
 .percent {
     position: sticky;
-    top: 16px;
+    top: 32px;
     z-index: 1;
     overflow: hidden;
     width: 100%;
