@@ -66,6 +66,23 @@
     }
 }
 
+.blurDebug {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 12px;
+    height: 180px;
+    background: repeating-linear-gradient(
+            to bottom,
+            red 0,
+            red 1px,
+            transparent 1px,
+            transparent 5px
+    );
+    pointer-events: none;
+}
+
 .percent {
     position: sticky;
     top: 32px;

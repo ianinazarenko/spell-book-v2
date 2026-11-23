@@ -59,6 +59,8 @@ export function CastStatus({
                 ></span>
             </div>
 
+            <div className={styles.blurDebug}></div>
+
             <div className={`${styles.info} ${isCasting ? styles._show : ''}`}>
                 <p>Spell is casting every {durVal} seconds...</p>
             </div>
